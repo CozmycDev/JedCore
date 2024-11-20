@@ -528,9 +528,10 @@ public class AbilityListener implements Listener {
 	public void onArrowHit(EntityDamageByEntityEvent event) {
 		if (event.getDamager().getType() == EntityType.ARROW) {
 			Arrow arrow = (Arrow) event.getDamager();
-			if (arrow.getShooter() instanceof Player && arrow.hasMetadata("daggerthrow")){
+			if (arrow.getShooter() instanceof Player && arrow.hasMetadata("daggerthrow")) {
+				event.setCancelled(true);
 				Player player = (Player) arrow.getShooter();
-				player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1);
+				player.playSound(arrow.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
 			}
 		}
 	}
