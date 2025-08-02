@@ -1,11 +1,11 @@
-[![GitHub Pre-Release](https://img.shields.io/github/release-pre/CozmycDev/JedCore.svg)](https://github.com/CozmycDev/JedCore/releases)
-[![Github All Releases](https://img.shields.io/github/downloads/CozmycDev/JedCore/total.svg)](https://github.com/CozmycDev/JedCore/releases)
-![Size](https://img.shields.io/github/repo-size/CozmycDev/JedCore.svg)
+[![GitHub Pre-Release](https://img.shields.io/github/release-pre/Hihelloy-main/JedCore.svg)](https://github.com/CozmycDev/JedCore/releases)
+[![Github All Releases](https://img.shields.io/github/downloads/Hihelloy-main/JedCore/total.svg)](https://github.com/CozmycDev/JedCore/releases)
+![Size](https://img.shields.io/github/repo-size/Hihelloy-main/JedCore.svg)
 
 # JedCore
 This is my fork of plushmonkey's fork of jedk1's JedCore addon for ProjectKorra.  
-Download releases [here](https://github.com/CozmycDev/JedCore/releases).
-Join our [Discord](https://discord.gg/gh9MfDmwZm) to discuss the plugin, suggest changes, report bugs, etc.
+Download releases [here](https://github.com/Hihelloy-main/JedCore/releases).
+Join our [Discord]() to discuss the plugin, suggest changes, report bugs, etc (new Discord soon).
 
 ## Changelog
 
