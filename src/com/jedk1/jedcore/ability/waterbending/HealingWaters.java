@@ -3,7 +3,7 @@ package com.jedk1.jedcore.ability.waterbending;
 import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.jedk1.jedcore.util.LightManager;
+import com.jedk1.jedcore.util.LightManagerUtil;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -205,7 +205,7 @@ public class HealingWaters extends HealingAbility implements AddonAbility {
 			int brightness = config.getInt("Abilities.Water.HealingWaters.DynamicLight.Brightness");
 			long keepAlive = config.getLong("Abilities.Water.HealingWaters.DynamicLight.KeepAlive");
 
-			LightManager.createLight(loc).brightness(brightness).timeUntilFadeout(keepAlive).emit();
+			LightManagerUtil.createLight(loc).brightness(brightness).timeUntilFadeout(keepAlive).emit();
 		}
 	}
 

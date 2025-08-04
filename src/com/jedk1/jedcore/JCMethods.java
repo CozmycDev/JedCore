@@ -1,27 +1,33 @@
 package com.jedk1.jedcore;
 
-import java.util.*;
-
-import com.jedk1.jedcore.util.*;
+import com.jedk1.jedcore.configuration.JedCoreConfig;
+import com.jedk1.jedcore.util.FireTick;
+import com.jedk1.jedcore.util.LightManagerUtil;
+import com.jedk1.jedcore.util.RegenTempBlock;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import org.bukkit.*;
+import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class JCMethods {
 
@@ -333,13 +339,7 @@ public class JCMethods {
 	}
 
 	public static void emitLight(Location loc) {
-		ConfigurationSection config = JedCoreConfig.getConfig((Player)null);
-		if (config.getBoolean("Properties.Fire.DynamicLight.Enabled")) {
-			int brightness = config.getInt("Properties.Fire.DynamicLight.Brightness");
-			long keepAlive = config.getLong("Properties.Fire.DynamicLight.KeepAlive");
-
-			LightManager.createLight(loc).brightness(brightness).timeUntilFadeout(keepAlive).emit();
-		}
+		LightManagerUtil.emitFirebendingLight(loc);
 	}
 
 	public static void reload() {

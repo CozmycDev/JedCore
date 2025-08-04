@@ -1,24 +1,23 @@
 package com.jedk1.jedcore;
 
-import java.io.IOException;
-import java.util.logging.*;
-
 import com.google.common.reflect.ClassPath;
-import com.jedk1.jedcore.util.*;
-import com.jedk1.jedcore.util.versionadapter.ParticleAdapter;
-import com.jedk1.jedcore.util.versionadapter.ParticleAdapterFactory;
-import com.jedk1.jedcore.util.versionadapter.PotionEffectAdapter;
-import com.jedk1.jedcore.util.versionadapter.PotionEffectAdapterFactory;
-import org.bukkit.World;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.jedk1.jedcore.command.Commands;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.listener.AbilityListener;
 import com.jedk1.jedcore.listener.CommandListener;
 import com.jedk1.jedcore.listener.JCListener;
+import com.jedk1.jedcore.util.*;
+import com.jedk1.jedcore.util.versionadapter.ParticleAdapter;
+import com.jedk1.jedcore.util.versionadapter.ParticleAdapterFactory;
+import com.jedk1.jedcore.util.versionadapter.PotionEffectAdapter;
+import com.jedk1.jedcore.util.versionadapter.PotionEffectAdapterFactory;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.World;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.IOException;
+import java.util.logging.Logger;
+
 
 public class JedCore extends JavaPlugin {
 
@@ -48,7 +47,8 @@ public class JedCore extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new CommandListener(this), this);
 		getServer().getPluginManager().registerEvents(new JCListener(this), this);
 		getServer().getPluginManager().registerEvents(new ChiRestrictor(), this);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new JCManager(this), 0, 1);
+
+		SchedulerUtil.runGlobalTimer(new JCManager(this), 0, 1);
 
 		new Commands();
 
@@ -62,13 +62,10 @@ public class JedCore extends JavaPlugin {
 
 		checkMaintainer();
 
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				JCMethods.registerCombos();
-				initializeCollisions();
-			}
-		}.runTaskLater(this, 1);
+		SchedulerUtil.runGlobalLater(() -> {
+			JCMethods.registerCombos();
+			initializeCollisions();
+		}, 1);
 		
 		try {
 	        MetricsLite metrics = new MetricsLite(this);

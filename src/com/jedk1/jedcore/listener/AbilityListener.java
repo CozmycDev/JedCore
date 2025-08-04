@@ -1,62 +1,24 @@
 package com.jedk1.jedcore.listener;
 
 import com.jedk1.jedcore.JedCore;
-import com.jedk1.jedcore.ability.airbending.AirBlade;
-import com.jedk1.jedcore.ability.airbending.AirBreath;
-import com.jedk1.jedcore.ability.airbending.AirGlide;
-import com.jedk1.jedcore.ability.airbending.AirPunch;
-import com.jedk1.jedcore.ability.airbending.Meditate;
-import com.jedk1.jedcore.ability.airbending.SonicBlast;
+import com.jedk1.jedcore.ability.airbending.*;
 import com.jedk1.jedcore.ability.avatar.SpiritBeam;
 import com.jedk1.jedcore.ability.avatar.elementsphere.ElementSphere;
 import com.jedk1.jedcore.ability.chiblocking.DaggerThrow;
-import com.jedk1.jedcore.ability.earthbending.EarthKick;
-import com.jedk1.jedcore.ability.earthbending.EarthLine;
-import com.jedk1.jedcore.ability.earthbending.EarthPillar;
-import com.jedk1.jedcore.ability.earthbending.EarthShard;
-import com.jedk1.jedcore.ability.earthbending.EarthSurf;
-import com.jedk1.jedcore.ability.earthbending.Fissure;
-import com.jedk1.jedcore.ability.earthbending.LavaDisc;
-import com.jedk1.jedcore.ability.earthbending.LavaFlux;
-import com.jedk1.jedcore.ability.earthbending.LavaThrow;
-import com.jedk1.jedcore.ability.earthbending.MagnetShield;
-import com.jedk1.jedcore.ability.earthbending.MetalArmor;
-import com.jedk1.jedcore.ability.earthbending.MetalFragments;
-import com.jedk1.jedcore.ability.earthbending.MetalHook;
-import com.jedk1.jedcore.ability.earthbending.MetalShred;
-import com.jedk1.jedcore.ability.earthbending.MudSurge;
-import com.jedk1.jedcore.ability.earthbending.SandBlast;
+import com.jedk1.jedcore.ability.earthbending.*;
 import com.jedk1.jedcore.ability.earthbending.combo.Crevice;
 import com.jedk1.jedcore.ability.earthbending.combo.MagmaBlast;
-import com.jedk1.jedcore.ability.firebending.Combustion;
-import com.jedk1.jedcore.ability.firebending.Discharge;
-import com.jedk1.jedcore.ability.firebending.FireBall;
-import com.jedk1.jedcore.ability.firebending.FireBreath;
-import com.jedk1.jedcore.ability.firebending.FireComet;
-import com.jedk1.jedcore.ability.firebending.FirePunch;
-import com.jedk1.jedcore.ability.firebending.FireShots;
-import com.jedk1.jedcore.ability.firebending.FireSki;
-import com.jedk1.jedcore.ability.firebending.LightningBurst;
+import com.jedk1.jedcore.ability.firebending.*;
 import com.jedk1.jedcore.ability.passive.WallRun;
-import com.jedk1.jedcore.ability.waterbending.BloodPuppet;
-import com.jedk1.jedcore.ability.waterbending.Drain;
-import com.jedk1.jedcore.ability.waterbending.FrostBreath;
-import com.jedk1.jedcore.ability.waterbending.IceClaws;
-import com.jedk1.jedcore.ability.waterbending.IceWall;
-import com.jedk1.jedcore.ability.waterbending.WakeFishing;
+import com.jedk1.jedcore.ability.waterbending.*;
 import com.jedk1.jedcore.ability.waterbending.combo.WaterFlow;
 import com.jedk1.jedcore.ability.waterbending.combo.WaterGimbal;
+import com.jedk1.jedcore.util.SchedulerUtil;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.AvatarAbility;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.*;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
@@ -65,7 +27,6 @@ import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -169,10 +130,10 @@ public class AbilityListener implements Listener {
 			ParticleEffect.FLAME.display(loc, 3, 0.1, 0.1, 0.1, 0.01);
 			ParticleEffect.SMOKE_NORMAL.display(loc, 2, 0.05, 0.05, 0.05, 0.01);
 			loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_EXTINGUISH, 0.3f, 1.4f);
-			item.remove();
+			SchedulerUtil.ensureEntity(item, item::remove);
 		}
 
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> recentlyDropped.remove(event.getPlayer().getUniqueId()), 2L);
+		SchedulerUtil.runGlobalLater(() -> recentlyDropped.remove(event.getPlayer().getUniqueId()), 2L);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -186,7 +147,7 @@ public class AbilityListener implements Listener {
 
 			recentlyDropped.add(event.getWhoClicked().getUniqueId());
 
-			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> {
+			SchedulerUtil.runGlobalLater(() -> {
 				recentlyDropped.remove(event.getWhoClicked().getUniqueId());
 			}, 2L);
 		}
@@ -506,7 +467,7 @@ public class AbilityListener implements Listener {
 						FireSki fs = CoreAbility.getAbility(player, FireSki.class);
 
 						if (fs != null) {
-							fs.remove();
+							SchedulerUtil.ensureEntity(player, fs::remove);
 						}
 					} else {
 						new FireSki(player);

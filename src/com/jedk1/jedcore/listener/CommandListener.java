@@ -4,6 +4,7 @@ import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.command.JedCoreCommand;
 import com.jedk1.jedcore.event.PKCommandEvent;
 import com.jedk1.jedcore.event.PKCommandEvent.CommandType;
+import com.jedk1.jedcore.util.SchedulerUtil;
 import com.projectkorra.projectkorra.command.PKCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -50,25 +50,23 @@ public class CommandListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPKCommand(final PKCommandEvent event) {
-		new BukkitRunnable() {
-			public void run() {
-				if (event.getType() != null) {
-					if (event.getType().equals(CommandType.WHO) && event.getSender().hasPermission("bending.command.who")) {
-						if (event.getArgs().length == 3) {
-							if (Bukkit.getPlayer(event.getArgs()[2]) != null) {
-								UUID uuid = Bukkit.getPlayer(event.getArgs()[2]).getUniqueId();
-								if (Arrays.asList(developers).contains(uuid.toString())) {
-									event.getSender().sendMessage(ChatColor.DARK_AQUA + "JedCore Developer");
-								}
+		SchedulerUtil.runGlobalLater(() -> {
+			if (event.getType() != null) {
+				if (event.getType().equals(CommandType.WHO) && event.getSender().hasPermission("bending.command.who")) {
+					if (event.getArgs().length == 3) {
+						if (Bukkit.getPlayer(event.getArgs()[2]) != null) {
+							UUID uuid = Bukkit.getPlayer(event.getArgs()[2]).getUniqueId();
+							if (Arrays.asList(developers).contains(uuid.toString())) {
+								event.getSender().sendMessage(ChatColor.DARK_AQUA + "JedCore Developer");
 							}
 						}
-						return;
 					}
-					if (event.getType().equals(CommandType.VERSION) && event.getSender().hasPermission("bending.command.version")) {
-						JedCoreCommand.sendBuildInfo(event.getSender());
-					}
+					return;
+				}
+				if (event.getType().equals(CommandType.VERSION) && event.getSender().hasPermission("bending.command.version")) {
+					JedCoreCommand.sendBuildInfo(event.getSender());
 				}
 			}
-		}.runTaskLater(JedCore.plugin, 1);
+		}, 1);
 	}
 }

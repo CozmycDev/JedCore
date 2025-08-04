@@ -28,8 +28,9 @@
     <dependency>
       <groupId>com.projectkorra</groupId>
       <artifactId>projectkorra</artifactId>
-      <version>1.12.0</version>
-      <scope>provided</scope>
+      <version>1.12.1-PRE-RELEASE-1</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/libs/ProjectKorra-1.12.1-PRE-RELEASE-1.jar</systemPath>
     </dependency>
   </dependencies>
 

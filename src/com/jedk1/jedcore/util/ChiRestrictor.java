@@ -1,6 +1,5 @@
 package com.jedk1.jedcore.util;
 
-import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
@@ -10,7 +9,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,11 +33,9 @@ public class ChiRestrictor implements Listener {
 
     @EventHandler
     public void onBendingReload(BendingReloadEvent event) {
-        new BukkitRunnable() {
-            public void run() {
-                reloadConfig();
-            }
-        }.runTaskLater(JedCore.plugin, 1);
+        		SchedulerUtil.runGlobalLater(() -> {
+            reloadConfig();
+        }, 1);
     }
 
     public static void reloadConfig() {

@@ -1,7 +1,6 @@
 package com.jedk1.jedcore.util;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,19 +10,8 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class LightManager {
 
@@ -41,8 +29,6 @@ public class LightManager {
     // Default LIGHT BlockData
     private final Map<Integer, BlockData> lightDataMap = new HashMap<>();
     private final Map<Integer, BlockData> waterloggedLightDataMap = new HashMap<>();
-
-    // Scheduler with threads equal to the number of available processors, this handles reverting expired lights
     private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
 
     /**
@@ -68,7 +54,7 @@ public class LightManager {
     /**
      * Retrieves the current time and iterates over all light data in the light map. If the current time is greater
      * than or equal to the expiry time of a light data, it fades the light out and removes the light data from the map.
-     * This is running periodically, or every 50ms, via the scheduled thread pool executor.
+     * This runs periodically via SchedulerUtil for Folia compatibility.
      */
     private void revertExpiredLights() {
         long currentTime = System.currentTimeMillis();
@@ -122,7 +108,10 @@ public class LightManager {
             scheduler = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
         }
 
-        scheduler.scheduleAtFixedRate(this::revertExpiredLights, 0, 50, TimeUnit.MILLISECONDS);
+        // Use SchedulerUtil for main thread tasks (revertExpiredLights)
+        SchedulerUtil.runGlobalTimer(this::revertExpiredLights, 0, 1);
+        
+        // Use ScheduledThreadPoolExecutor for client-side operations (sendBlockChange)
         scheduler.scheduleAtFixedRate(this::processBlockChanges, 0, 50, TimeUnit.MILLISECONDS);
     }
 
@@ -134,28 +123,22 @@ public class LightManager {
      */
     private void fadeLight(LightData lightData) {
         int brightness = lightData.brightness;
-
-        class TaskHolder {
-            ScheduledFuture<?> future;
+        fadeLightRecursive(lightData, brightness);
+    }
+    
+    private void fadeLightRecursive(LightData lightData, int currentBrightness) {
+        if (currentBrightness <= 0) {
+            revertLight(lightData);
+            return;
         }
-        TaskHolder taskHolder = new TaskHolder();
-
-        Runnable task = new Runnable() {
-            private int currentBrightness = brightness;
-
-            @Override
-            public void run() {
-                currentBrightness--;
-                if (currentBrightness > 0) {
-                    sendLightChange(lightData.location, currentBrightness, lightData.observers);
-                } else {
-                    revertLight(lightData);
-                    taskHolder.future.cancel(false);
-                }
-            }
-        };
-
-        taskHolder.future = scheduler.scheduleAtFixedRate(task, 0, 50, TimeUnit.MILLISECONDS);
+        
+        // Process the light change (client-side only)
+        sendLightChange(lightData.location, currentBrightness, lightData.observers);
+        
+        // Schedule next fade step using the thread pool
+        scheduler.schedule(() -> {
+            fadeLightRecursive(lightData, currentBrightness - 1);
+        }, 50, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -181,9 +164,8 @@ public class LightManager {
         while ((blockChange = blockChangeQueue.poll()) != null) {
             Player player = blockChange.getPlayer();
             BlockChange finalBlockChange = blockChange;
-            Bukkit.getScheduler().runTaskAsynchronously(ProjectKorra.plugin, () -> {
-                player.sendBlockChange(finalBlockChange.getLocation(), finalBlockChange.getBlockData());
-            });
+            // sendBlockChange is client-side only, so we can call it directly from the thread pool
+            player.sendBlockChange(finalBlockChange.getLocation(), finalBlockChange.getBlockData());
         }
     }
 

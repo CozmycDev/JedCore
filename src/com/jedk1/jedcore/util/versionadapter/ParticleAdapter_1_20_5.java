@@ -1,6 +1,8 @@
 package com.jedk1.jedcore.util.versionadapter;
 
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 
 public class ParticleAdapter_1_20_5 implements ParticleAdapter {
 

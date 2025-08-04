@@ -4,11 +4,7 @@ import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.ability.chiblocking.Backstab;
 import com.jedk1.jedcore.ability.chiblocking.DaggerThrow;
-import com.jedk1.jedcore.ability.earthbending.EarthSurf;
-import com.jedk1.jedcore.ability.earthbending.LavaDisc;
-import com.jedk1.jedcore.ability.earthbending.MetalFragments;
-import com.jedk1.jedcore.ability.earthbending.MetalShred;
-import com.jedk1.jedcore.ability.earthbending.MudSurge;
+import com.jedk1.jedcore.ability.earthbending.*;
 import com.jedk1.jedcore.ability.earthbending.combo.MagmaBlast;
 import com.jedk1.jedcore.ability.firebending.FireBreath;
 import com.jedk1.jedcore.ability.firebending.FirePunch;
@@ -17,6 +13,7 @@ import com.jedk1.jedcore.ability.waterbending.IceClaws;
 import com.jedk1.jedcore.ability.waterbending.IceWall;
 import com.jedk1.jedcore.util.LightManager;
 import com.jedk1.jedcore.util.RegenTempBlock;
+import com.jedk1.jedcore.util.SchedulerUtil;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
@@ -46,7 +43,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class JCListener implements Listener {
 
@@ -154,13 +150,13 @@ public class JCListener implements Listener {
 					DaggerThrow daggerThrow = CoreAbility.getAbility(shooter, DaggerThrow.class);
 					if (daggerThrow != null) {
 						daggerThrow.damageEntityFromArrow(((LivingEntity) event.getEntity()), arrow);
-						arrow.remove();
+						SchedulerUtil.ensureEntity(arrow, arrow::remove);
 						event.setCancelled(true);
 					}
 				}
 				if (arrow.hasMetadata("metalhook")) {
 					event.setDamage(0);
-					arrow.remove();
+					SchedulerUtil.ensureEntity(arrow, arrow::remove);
 					event.setCancelled(true);
 				}
 			}
@@ -211,12 +207,10 @@ public class JCListener implements Listener {
 		LightManager.get().restart();
 		// There's a PK bug where a new collision manager is set on reload without stopping the old task.
 		ProjectKorra.getCollisionManager().stopCollisionDetection();
-		new BukkitRunnable() {
-			public void run() {
-				JCMethods.reload();
-				sender.sendMessage(ChatColor.DARK_AQUA + "JedCore config reloaded.");
-			}
-		}.runTaskLater(JedCore.plugin, 1);
+		SchedulerUtil.runGlobalLater(() -> {
+			JCMethods.reload();
+			sender.sendMessage(ChatColor.DARK_AQUA + "JedCore config reloaded.");
+		}, 1);
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)

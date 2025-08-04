@@ -4,6 +4,7 @@ import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.util.AbilitySelector;
+import com.jedk1.jedcore.util.SchedulerUtil;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
@@ -152,15 +153,15 @@ public class DaggerThrow extends ChiAbility implements AddonAbility {
 
 		if (RegionProtection.isRegionProtected(shooter, arrow.getLocation(), "DaggerThrow")) return;
 
-		arrow.setVelocity(new Vector(0, 0, 0));
-		entity.setNoDamageTicks(0);
+		SchedulerUtil.ensureEntity(arrow, () -> arrow.setVelocity(new Vector(0, 0, 0)));
+		SchedulerUtil.ensureEntity(entity, () -> entity.setNoDamageTicks(0));
 
 		double prevHealth = entity.getHealth();
 
-		DamageHandler.damageEntity(entity, damage, this);
+		SchedulerUtil.ensureEntity(entity, () -> DamageHandler.damageEntity(entity, damage, this));
 
 		if (prevHealth > entity.getHealth()) {
-			arrow.remove();
+			SchedulerUtil.ensureEntity(arrow, arrow::remove);
 		}
 
 		if (!(entity instanceof Player target)) {
