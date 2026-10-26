@@ -1,5 +1,6 @@
 package com.jedk1.jedcore.ability.earthbending;
 
+import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.collision.CollisionUtil;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
@@ -77,10 +78,10 @@ public class MudSurge extends EarthAbility implements AddonAbility {
 				Material.SOUL_SAND, Material.SOUL_SOIL, Material.RED_SANDSTONE, Material.SANDSTONE, Material.CHISELED_SANDSTONE,
 				Material.CHISELED_RED_SANDSTONE, Material.SMOOTH_SANDSTONE, Material.SMOOTH_RED_SANDSTONE, Material.CUT_SANDSTONE,
 				Material.CUT_RED_SANDSTONE));
-		if (GeneralMethods.getMCVersion() >= 1170) {
+		if (JCMethods.getMCVersion() >= 1170) {
 			mudTypes.add(Material.getMaterial("ROOTED_DIRT"));
 		}
-		if (GeneralMethods.getMCVersion() >= 1190) {
+		if (JCMethods.getMCVersion() >= 1190) {
 			mudTypes.add(Material.getMaterial("MUD"));
 			mudTypes.add(Material.getMaterial("MUDDY_MANGROVE_ROOTS"));
 			mudTypes.add(Material.getMaterial("PACKED_MUD"));

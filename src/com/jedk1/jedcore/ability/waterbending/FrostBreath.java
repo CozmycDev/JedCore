@@ -36,7 +36,7 @@ public class FrostBreath extends IceAbility implements AddonAbility {
 				Material.AIR,
 				Material.VOID_AIR,
 				Material.CAVE_AIR));
-		if (GeneralMethods.getMCVersion() >= 1170) {
+		if (JCMethods.getMCVersion() >= 1170) {
 			add(Material.getMaterial("LIGHT"));
 		}
 	}};

@@ -1,5 +1,6 @@
 package com.jedk1.jedcore.util.versionadapter;
 
+import com.jedk1.jedcore.JCMethods;
 import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Bukkit;
 
@@ -8,7 +9,7 @@ public class PotionEffectAdapterFactory {
     private PotionEffectAdapter adapter;
 
     public PotionEffectAdapterFactory() {
-        int serverVersion = GeneralMethods.getMCVersion();
+        int serverVersion = JCMethods.getMCVersion();
 
         if (serverVersion >= 1205) {
             Bukkit.getLogger().info("[JedCore] Using 1.20.5+ PotionEffectAdapter");

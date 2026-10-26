@@ -1,5 +1,6 @@
 package com.jedk1.jedcore.util;
 
+import com.jedk1.jedcore.JCMethods;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import org.bukkit.Bukkit;
@@ -51,7 +52,7 @@ public class LightManager {
      * using a ScheduledThreadPoolExecutor.
      */
     private LightManager() {
-        modern = GeneralMethods.getMCVersion() >= 1170;
+        modern = JCMethods.getMCVersion() >= 1170;
 
         int numLocks = Runtime.getRuntime().availableProcessors() * 2;
         locks = new Object[numLocks];

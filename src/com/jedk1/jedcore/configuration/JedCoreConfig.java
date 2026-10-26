@@ -155,7 +155,7 @@ public class JedCoreConfig {
 				"BROWN_MUSHROOM"
 		));
 		
-		config.addDefault("Abilities.Air.AirBreath.Enabled", true);
+		config.addDefault("Abilities.Air.AirBreath.Enabled", false); // now included in PK Core as of 1.13 beta 2
 		config.addDefault("Abilities.Air.AirBreath.Description", "To use, hold Sneak (Default: Shift) to release "
 				+ "a strong breath of wind, knocking your opponents "
 				+ "back. This ability also has a longer range and "

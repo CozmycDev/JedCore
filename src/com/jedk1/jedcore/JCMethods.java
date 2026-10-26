@@ -37,7 +37,7 @@ public class JCMethods {
 				Material.BEETROOTS, Material.CARROTS, Material.POTATOES, Material.CRIMSON_FUNGUS, Material.WARPED_FUNGUS,
 				Material.BAMBOO, Material.BAMBOO_SAPLING));
 
-		int serverVersion = GeneralMethods.getMCVersion();
+		int serverVersion = JCMethods.getMCVersion();
 		if (serverVersion >= 1170) {
 			add(Material.getMaterial("AZALEA"));
 			add(Material.getMaterial("FLOWERING_AZALEA"));
@@ -353,5 +353,21 @@ public class JCMethods {
 		RegenTempBlock.revertAll();
 		JedCore.plugin.initializeCollisions();
 		FireTick.loadMethod();
+	}
+
+	public static int getMCVersion() {
+		String version = Bukkit.getBukkitVersion().split("-", 2)[0];
+
+		if (!version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
+			JedCore.log.warning("Version not valid! Cannot parse version \"" + version + "\"");
+			return 1164;
+		}
+
+		String[] split = version.split("\\.");
+		int major = Integer.parseInt(split[0]);
+		int minor = Integer.parseInt(split[1]);
+		int fix = (split.length == 3) ? Integer.parseInt(split[2]) : 0;
+
+		return major * 1000 + minor * 10 + fix;
 	}
 }

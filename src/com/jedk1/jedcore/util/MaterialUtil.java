@@ -1,5 +1,6 @@
 package com.jedk1.jedcore.util;
 
+import com.jedk1.jedcore.JCMethods;
 import com.projectkorra.projectkorra.GeneralMethods;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -22,7 +23,7 @@ public class MaterialUtil {
                 Material.OXEYE_DAISY, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE,
                 Material.WHEAT, Material.SNOW, Material.SUGAR_CANE, Material.VINE, Material.SUNFLOWER, Material.LILAC,
                 Material.LARGE_FERN, Material.ROSE_BUSH, Material.PEONY));
-        if (GeneralMethods.getMCVersion() >= 1170) {
+        if (JCMethods.getMCVersion() >= 1170) {
             add(Material.getMaterial("LIGHT"));
         }
     }};
