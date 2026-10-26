@@ -1,6 +1,8 @@
 package com.jedk1.jedcore;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.jedk1.jedcore.ability.waterbending.passive.IcePassive;
 import com.jedk1.jedcore.util.*;
@@ -355,13 +357,19 @@ public class JCMethods {
 		FireTick.loadMethod();
 	}
 
+	// todo: fragile/untested
 	public static int getMCVersion() {
-		String version = Bukkit.getBukkitVersion().split("-", 2)[0];
+		String rawVersion = Bukkit.getBukkitVersion().split("-", 2)[0];
 
-		if (!version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
-			JedCore.log.warning("Version not valid! Cannot parse version \"" + version + "\"");
+		Pattern pattern = Pattern.compile("^\\d+\\.\\d+(\\.\\d+)?");
+		Matcher matcher = pattern.matcher(rawVersion);
+
+		if (!matcher.find()) {
+			JedCore.log.warning("Version not valid! Cannot parse version \"" + rawVersion + "\"");
 			return 1164;
 		}
+
+		String version = matcher.group();
 
 		String[] split = version.split("\\.");
 		int major = Integer.parseInt(split[0]);
