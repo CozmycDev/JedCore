@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
@@ -144,7 +145,7 @@ public class FireShots extends FireAbility implements AddonAbility {
 					location.getWorld().spawnParticle(Particle.FLAME, location, 5, 0.0, 0.0, 0.0, 0.02);
 				}
 				location.getWorld().spawnParticle(Particle.SMOKE, location, 2, 0.0, 0.0, 0.0, 0.01);
-				JCMethods.emitLight(location);
+				LightManager.createLight(location).emit();
 
 				Sphere collider = new Sphere(location.toVector(), collisionRadius);
 
@@ -265,10 +266,9 @@ public class FireShots extends FireAbility implements AddonAbility {
 	}
 
 	private void displayFireBalls() {
-		playFirebendingParticles(getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld()), 3, 0, 0, 0);
-
-		getRightHandPos().getWorld().spawnParticle(Particle.SMOKE, getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld()), 3, 0, 0, 0, 0.01);
-		JCMethods.emitLight(getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld()));
+		Location loc = getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld());
+		playFirebendingParticles(loc, 3, 0, 0, 0);
+		getRightHandPos().getWorld().spawnParticle(Particle.SMOKE, loc, 3, 0, 0, 0, 0.01);
 	}
 
 	@Override

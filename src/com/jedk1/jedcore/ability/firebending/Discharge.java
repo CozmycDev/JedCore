@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -152,7 +153,7 @@ public class Discharge extends LightningAbility implements AddonAbility {
 
 				for (int j = 0; j < 5; j++) {
 					playLightningbendingParticle(l.clone(), 0f, 0f, 0f);
-					JCMethods.emitLight(l.clone());
+					LightManager.createLight(l.clone()).emit();
 
 					if (rand.nextInt(soundInterval) == 0) {
 						player.getWorld().playSound(l, Sound.ENTITY_BEE_HURT, soundVolume, 0.2f);
@@ -171,7 +172,7 @@ public class Discharge extends LightningAbility implements AddonAbility {
 
 						for (int k = 0; k < 5; k++) {
 							playLightningbendingParticle(entity.getLocation(), (float) Math.random(), (float) Math.random(), (float) Math.random());
-							JCMethods.emitLight(entity.getLocation());
+							LightManager.createLight(entity.getLocation()).emit();
 						}
 
 						entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_BEE_HURT, soundVolume, 0.2f);

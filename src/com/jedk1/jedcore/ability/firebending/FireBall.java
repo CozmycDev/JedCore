@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
@@ -136,7 +137,7 @@ public class FireBall extends FireAbility implements AddonAbility {
 				playFirebendingParticles(location, 1, 0, 0, 0);
 			}
 
-			JCMethods.emitLight(location);
+			LightManager.createLight(location).emit();
 
 			boolean hitTarget = CollisionDetector.checkEntityCollisions(player, new Sphere(location.toVector(), collisionRadius), this::doDamage);
 

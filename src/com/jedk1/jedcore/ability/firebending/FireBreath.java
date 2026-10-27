@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import org.bukkit.Color;
@@ -230,7 +231,6 @@ public class FireBreath extends FireAbility implements AddonAbility {
 			} else {
 				playFirebendingParticles(loc, particles, Math.random(), Math.random(), Math.random());
 				loc.getWorld().spawnParticle(Particle.SMOKE, loc, particles, Math.random(), Math.random(), Math.random(), size);
-				JCMethods.emitLight(loc);
 			}
 		}
 	}
@@ -238,7 +238,7 @@ public class FireBreath extends FireAbility implements AddonAbility {
 	private void displayParticle(Location location, int amount, int r, int g, int b) {
 		Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(r, g, b), 1);
 		location.getWorld().spawnParticle(Particle.DUST, location, amount, 0, 0, 0, 0.005, dustOptions);
-		JCMethods.emitLight(location);
+		LightManager.createLight(location).emit();
 	}
 
 	private boolean isInRange(int x, int min, int max) {

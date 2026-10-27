@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -280,7 +281,7 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 				Location loc = player.getLocation().add(x, 1.0D, z);
 				playFirebendingParticles(loc, 3, 0.0, 0.0, 0.0);
 				player.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 4, 0.0, 0.0, 0.0, 0.01);
-				JCMethods.emitLight(loc);
+				LightManager.createLight(loc).emit();
 			}
 		}
 	}
@@ -395,7 +396,7 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 			location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location, 1, 0.0, 0.0, 0.0, 0.06);
 			location.getWorld().spawnParticle(Particle.FIREWORK, location, 1, 0.0, 0.0, 0.0, 0.06);
 			location.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1.0F, 0.01F);
-			JCMethods.emitLight(location);
+			LightManager.createLight(location).emit();
 		}
 	}
 

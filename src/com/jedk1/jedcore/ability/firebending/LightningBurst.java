@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -317,7 +318,7 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 				location = location.add(location.getDirection().clone().multiply(step));
 
 				playLightningbendingParticle(location, 0f, 0f, 0f);
-				JCMethods.emitLight(location);
+				LightManager.createLight(location).emit();
 			}
 			switch (rand.nextInt(3)) {
 			case 0:

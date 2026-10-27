@@ -365,16 +365,6 @@ public class JCMethods {
 		return false;
 	}
 
-	public static void emitLight(Location loc) {
-		ConfigurationSection config = JedCoreConfig.getConfig((Player)null);
-		if (config.getBoolean("Properties.Fire.DynamicLight.Enabled")) {
-			int brightness = config.getInt("Properties.Fire.DynamicLight.Brightness");
-			long keepAlive = config.getLong("Properties.Fire.DynamicLight.KeepAlive");
-
-			LightManager.createLight(loc).brightness(brightness).timeUntilFadeout(keepAlive).emit();
-		}
-	}
-
 	public static void reload() {
 		JedCore.log.info("JedCore Reloaded.");
 		JedCore.plugin.reloadConfig();

@@ -175,7 +175,6 @@ public class FireSki extends FireAbility implements AddonAbility {
 			size += 0.05;
 			playFirebendingParticles(l, 4, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01));
 			l.getWorld().spawnParticle(Particle.SMOKE, l, 1, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01), 0.08);
-			JCMethods.emitLight(l);
 		}
 
 		size = 0;
@@ -183,7 +182,6 @@ public class FireSki extends FireAbility implements AddonAbility {
 			size += 0.05;
 			playFirebendingParticles(l, 4, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01));
 			l.getWorld().spawnParticle(Particle.SMOKE, l, 1, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01), 0.08);
-			JCMethods.emitLight(l);
 		}
 	}
 
