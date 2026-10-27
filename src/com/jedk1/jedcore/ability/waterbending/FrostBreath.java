@@ -33,13 +33,11 @@ public class FrostBreath extends IceAbility implements AddonAbility {
 		addAll(Arrays.asList(
 				Material.ICE,
 				Material.LAVA,
-				Material.AIR,
-				Material.VOID_AIR,
-				Material.CAVE_AIR));
-		if (JCMethods.getMCVersion() >= 1170) {
-			add(Material.getMaterial("LIGHT"));
-		}
-	}};
+		Material.AIR,
+		Material.VOID_AIR,
+		Material.CAVE_AIR,
+		Material.LIGHT));
+    }};
 
 	//Savannas are 1.0 temp with 0 humidity. Deserts are 2.0 temp with 0 humidity.
 	private static float MAX_TEMP = 1.0F;
@@ -261,7 +259,7 @@ public class FrostBreath extends IceAbility implements AddonAbility {
 						}
 
 						if (config.slowEnabled) {
-							((LivingEntity) entity).addPotionEffect(JedCore.plugin.getPotionEffectAdapter().getSlownessEffect((int) config.slowDuration, 5));
+							((LivingEntity) entity).addPotionEffect(com.jedk1.jedcore.JCMethods.getSlownessEffect((int) config.slowDuration, 5));
 						}
 
 						if (config.damageEnabled) {
@@ -278,7 +276,7 @@ public class FrostBreath extends IceAbility implements AddonAbility {
 					freezeGround(loc);
 				}
 
-				loc.getWorld().spawnParticle(Particle.SNOW_SHOVEL, loc, config.particles, Math.random(), Math.random(), Math.random(), size);
+				loc.getWorld().spawnParticle(Particle.POOF, loc, config.particles, Math.random(), Math.random(), Math.random(), size);
 
 				JCMethods.displayColoredParticles("#DCDCDC", loc, 1, Math.random(), Math.random(), Math.random(), 0.003f);
 				JCMethods.displayColoredParticles("#9696FF", loc, 1, Math.random(), Math.random(), Math.random(), 0.0035f);

@@ -229,7 +229,7 @@ public class FireBreath extends FireAbility implements AddonAbility {
 				}
 			} else {
 				playFirebendingParticles(loc, particles, Math.random(), Math.random(), Math.random());
-				loc.getWorld().spawnParticle(Particle.SMOKE_NORMAL, loc, particles, Math.random(), Math.random(), Math.random(), size);
+				loc.getWorld().spawnParticle(Particle.SMOKE, loc, particles, Math.random(), Math.random(), Math.random(), size);
 				JCMethods.emitLight(loc);
 			}
 		}
@@ -237,7 +237,7 @@ public class FireBreath extends FireAbility implements AddonAbility {
 
 	private void displayParticle(Location location, int amount, int r, int g, int b) {
 		Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(r, g, b), 1);
-		location.getWorld().spawnParticle(Particle.REDSTONE, location, amount, 0, 0, 0, 0.005, dustOptions);
+		location.getWorld().spawnParticle(Particle.DUST, location, amount, 0, 0, 0, 0.005, dustOptions);
 		JCMethods.emitLight(location);
 	}
 

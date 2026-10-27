@@ -272,7 +272,7 @@ public class MetalFragments extends MetalAbility implements AddonAbility {
 			}
 			if (touchedLiving || f.isOnGround() || f.isDead()) {
 				f.getLocation().getWorld().spawnParticle(
-						Particle.ITEM_CRACK,
+						Particle.ITEM,
 						f.getLocation(),
 						3,
 						0.3, 0.3, 0.3,
@@ -312,7 +312,7 @@ public class MetalFragments extends MetalAbility implements AddonAbility {
 	public void removeFragments() {
 		for (Item i : thrownFragments) {
 			i.getLocation().getWorld().spawnParticle(
-					Particle.ITEM_CRACK,
+					Particle.ITEM,
 					i.getLocation(),
 					3,
 					0.3, 0.3, 0.3,

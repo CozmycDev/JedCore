@@ -68,7 +68,7 @@ public class MudSurge extends EarthAbility implements AddonAbility {
 	private static Material mudType;
 
 	static {
-		mudType = Material.valueOf("BROWN_TERRACOTTA");
+		mudType = Material.MUD;
 		mudTypes.addAll(Arrays.asList(Material.SAND, Material.RED_SAND, Material.CLAY, Material.TERRACOTTA, Material.BLACK_TERRACOTTA, Material.BLUE_TERRACOTTA,
 				Material.BROWN_TERRACOTTA, Material.CYAN_TERRACOTTA, Material.GRAY_TERRACOTTA, Material.GREEN_TERRACOTTA,
 				Material.LIGHT_BLUE_TERRACOTTA, Material.LIGHT_GRAY_TERRACOTTA, Material.LIME_TERRACOTTA,
@@ -77,16 +77,7 @@ public class MudSurge extends EarthAbility implements AddonAbility {
 				Material.GRASS_BLOCK, Material.DIRT, Material.MYCELIUM, Material.COARSE_DIRT,
 				Material.SOUL_SAND, Material.SOUL_SOIL, Material.RED_SANDSTONE, Material.SANDSTONE, Material.CHISELED_SANDSTONE,
 				Material.CHISELED_RED_SANDSTONE, Material.SMOOTH_SANDSTONE, Material.SMOOTH_RED_SANDSTONE, Material.CUT_SANDSTONE,
-				Material.CUT_RED_SANDSTONE));
-		if (JCMethods.getMCVersion() >= 1170) {
-			mudTypes.add(Material.getMaterial("ROOTED_DIRT"));
-		}
-		if (JCMethods.getMCVersion() >= 1190) {
-			mudTypes.add(Material.getMaterial("MUD"));
-			mudTypes.add(Material.getMaterial("MUDDY_MANGROVE_ROOTS"));
-			mudTypes.add(Material.getMaterial("PACKED_MUD"));
-		    mudType = Material.valueOf("MUD");
-		}
+				Material.CUT_RED_SANDSTONE, Material.ROOTED_DIRT, Material.MUD, Material.MUDDY_MANGROVE_ROOTS, Material.PACKED_MUD));
 	}
 
 	private CompositeRemovalPolicy removalPolicy;

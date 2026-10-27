@@ -145,7 +145,7 @@ public class IceClaws extends IceAbility implements AddonAbility {
 			if (!isTransparent(head.getBlock())) return false;
 			GeneralMethods.displayColoredParticle("66FFFF", head);
 			GeneralMethods.displayColoredParticle("CCFFFF", head);
-			head.getWorld().spawnParticle(Particle.SNOW_SHOVEL, head, 1, 0, 0, 0, 0);
+			head.getWorld().spawnParticle(Particle.POOF, head, 1, 0, 0, 0, 0);
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(head, 1.5)) {
 				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {
 					freezeEntity((LivingEntity) entity, false);
@@ -178,7 +178,7 @@ public class IceClaws extends IceAbility implements AddonAbility {
 
 	private void displayChargeUp() {
 		Location location = getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.75D)).toLocation(player.getWorld());
-		location.getWorld().spawnParticle(Particle.WATER_SPLASH, location, 1, Math.random()/3, Math.random()/3, Math.random()/3, 0.0);
+		location.getWorld().spawnParticle(Particle.SPLASH, location, 1, Math.random()/3, Math.random()/3, Math.random()/3, 0.0);
 	}
 
 	public static boolean freezeEntity(Player player, LivingEntity entity) {
@@ -199,7 +199,7 @@ public class IceClaws extends IceAbility implements AddonAbility {
 		}
 		int duration = isPunch ? punchSlowDur : throwSlowDur;
 		int level = isPunch ? punchSlownessLevel : throwSlownessLevel;
-		entity.addPotionEffect(JedCore.plugin.getPotionEffectAdapter().getSlownessEffect(duration, level));
+		entity.addPotionEffect(com.jedk1.jedcore.JCMethods.getSlownessEffect(duration, level));
 		if (!applyCooldownOnThrow || isPunch) {
 			bPlayer.addCooldown(this, isPunch ? punchCooldown : throwCooldown);
 		}

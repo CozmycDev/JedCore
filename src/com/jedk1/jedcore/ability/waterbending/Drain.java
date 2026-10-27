@@ -344,7 +344,7 @@ public class Drain extends WaterAbility implements AddonAbility {
 					playerLoc = player.getEyeLocation().add(player.getLocation().getDirection().multiply(holdRange)).subtract(0, .8, 0);
 				Vector dir = GeneralMethods.getDirection(l, playerLoc);
 				l = l.add(dir.multiply(absorbSpeed));
-				l.getWorld().spawnParticle(Particle.WATER_SPLASH, l, 1, 0, 0, 0, 0);
+				l.getWorld().spawnParticle(Particle.SPLASH, l, 1, 0, 0, 0, 0);
 				GeneralMethods.displayColoredParticle("0099FF", l);
 				if (l.distance(playerLoc) < 1) {
 					toRemove.add(locations.indexOf(l));

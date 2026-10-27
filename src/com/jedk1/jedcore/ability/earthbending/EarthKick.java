@@ -202,8 +202,8 @@ public class EarthKick extends EarthAbility implements AddonAbility {
 			}
 
 			for (int i = 0; i < 2; i++) {
-				location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 1, 0.0, 0.0, 0.0, 0.1, materialData);
-				location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 1, 0.0, 0.0, 0.0, 0.2, materialData);
+				location.getWorld().spawnParticle(Particle.BLOCK, location, 1, 0.0, 0.0, 0.0, 0.1, materialData);
+				location.getWorld().spawnParticle(Particle.BLOCK, location, 1, 0.0, 0.0, 0.0, 0.2, materialData);
 			}
 
 			AABB collider = BlockUtil.getFallingBlockBoundsFull(fb).scale(entityCollisionRadius * 2.0);

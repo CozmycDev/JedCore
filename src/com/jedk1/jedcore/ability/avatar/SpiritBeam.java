@@ -130,8 +130,8 @@ public class SpiritBeam extends AvatarAbility implements AddonAbility {
 		JCMethods.displayColoredParticles(purple, location, 1, (float) Math.random() / 3, (float) Math.random() / 3, (float) Math.random() / 3, 0f);
 		float randomOffset = (float) Math.random() / 3;
 		BlockData blockData = Material.NETHER_PORTAL.createBlockData();
-		location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 1, randomOffset, randomOffset, randomOffset, 0.1F, blockData);
-		location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 1, (float) direction.getX(), (float) direction.getY(), (float) direction.getZ(), 0.1F, blockData);
+		location.getWorld().spawnParticle(Particle.BLOCK, location, 1, randomOffset, randomOffset, randomOffset, 0.1F, blockData);
+		location.getWorld().spawnParticle(Particle.BLOCK, location, 1, (float) direction.getX(), (float) direction.getY(), (float) direction.getZ(), 0.1F, blockData);
 	}
 
 	private void damageNearbyEntities(Location location) {

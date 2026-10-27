@@ -253,7 +253,7 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 				}
 
 				if (charged) {
-					player.getWorld().spawnParticle(Particle.SMOKE_LARGE, player.getLocation(), 1, Math.random(), Math.random(), Math.random(), 0.1);
+					player.getWorld().spawnParticle(Particle.LARGE_SMOKE, player.getLocation(), 1, Math.random(), Math.random(), Math.random(), 0.1);
 				}
 			} else {
 				if (charged) {
@@ -279,7 +279,7 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 
 				Location loc = player.getLocation().add(x, 1.0D, z);
 				playFirebendingParticles(loc, 3, 0.0, 0.0, 0.0);
-				player.getWorld().spawnParticle(Particle.SMOKE_LARGE, loc, 4, 0.0, 0.0, 0.0, 0.01);
+				player.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 4, 0.0, 0.0, 0.0, 0.01);
 				JCMethods.emitLight(loc);
 			}
 		}
@@ -392,8 +392,8 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 			} else {
 				location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0.0, 0.0, 0.0, 0.03);
 			}
-			location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, 1, 0.0, 0.0, 0.0, 0.06);
-			location.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, location, 1, 0.0, 0.0, 0.0, 0.06);
+			location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location, 1, 0.0, 0.0, 0.0, 0.06);
+			location.getWorld().spawnParticle(Particle.FIREWORK, location, 1, 0.0, 0.0, 0.0, 0.06);
 			location.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1.0F, 0.01F);
 			JCMethods.emitLight(location);
 		}
@@ -513,10 +513,10 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 			} else {
 				location.getWorld().spawnParticle(Particle.FLAME, location, 20, Math.random(), Math.random(), Math.random(), 0.5);
 			}
-			location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, 20, Math.random(), Math.random(), Math.random(), 0.5);
-			location.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, location, 20, Math.random(), Math.random(), Math.random(), 0.5);
-			location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, 20, Math.random(), Math.random(), Math.random());
-			location.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, location, 20, Math.random(), Math.random(), Math.random(), 0.5);
+			location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location, 20, Math.random(), Math.random(), Math.random(), 0.5);
+			location.getWorld().spawnParticle(Particle.FIREWORK, location, 20, Math.random(), Math.random(), Math.random(), 0.5);
+			location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location, 20, Math.random(), Math.random(), Math.random());
+			location.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, location, 20, Math.random(), Math.random(), Math.random(), 0.5);
 			location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
 		}
 

@@ -139,7 +139,7 @@ public class EarthShard extends EarthAbility implements AddonAbility {
 			playMetalbendingSound(block.getLocation());
 		} else {
 			block.getLocation().add(0, 1, 0).getWorld().spawnParticle(
-					Particle.BLOCK_CRACK,
+					Particle.BLOCK,
 					block.getLocation().add(0, 1, 0),
 					20,
 					0.0, 0.0, 0.0,
@@ -238,7 +238,7 @@ public class EarthShard extends EarthAbility implements AddonAbility {
 				CollisionDetector.checkEntityCollisions(player, collider, (e) -> {
 					DamageHandler.damageEntity(e, isMetal(fb.getBlockData().getMaterial()) ? metalDmg : normalDmg, this);
 					((LivingEntity) e).setNoDamageTicks(0);
-					fb.getLocation().getWorld().spawnParticle(Particle.BLOCK_CRACK, fb.getLocation(), 20, 0, 0, 0, 0, fb.getBlockData());
+					fb.getLocation().getWorld().spawnParticle(Particle.BLOCK, fb.getLocation(), 20, 0, 0, 0, 0, fb.getBlockData());
 					tfb.remove();
 					return false;
 				});

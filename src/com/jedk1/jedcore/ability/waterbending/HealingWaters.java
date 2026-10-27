@@ -3,7 +3,7 @@ package com.jedk1.jedcore.ability.waterbending;
 import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.jedk1.jedcore.util.LightManager;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.ability.HealingAbility;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.region.RegionProtection;
 
+import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import org.bukkit.Location;
@@ -64,7 +65,7 @@ public class HealingWaters extends HealingAbility implements AddonAbility {
 					Location playerLoc = entity.getLocation();
 					playerLoc.add(0, 1, 0);
 					JCMethods.displayColoredParticles("#9696E1", playerLoc, 3, Math.random(), Math.random(), Math.random(), 0f, 50);
-					player.getWorld().spawnParticle(Particle.WATER_WAKE, playerLoc, 25, 0, 0, 0, 0.05F);
+					player.getWorld().spawnParticle(Particle.FISHING, playerLoc, 25, 0, 0, 0, 0.05F);
 					giveHPToEntity((LivingEntity) entity);
 					emitLight(playerLoc);
 					emitLight(entity.getLocation());
@@ -73,7 +74,7 @@ public class HealingWaters extends HealingAbility implements AddonAbility {
 				Location playerLoc = player.getLocation();
 				playerLoc.add(0, 1, 0);
 				JCMethods.displayColoredParticles("#9696E1", playerLoc, 3, Math.random(), Math.random(), Math.random(), 0f, 50);
-				player.getWorld().spawnParticle(Particle.WATER_WAKE, playerLoc, 25, 0, 0, 0, 0.05F);
+				player.getWorld().spawnParticle(Particle.FISHING, playerLoc, 25, 0, 0, 0, 0.05F);
 				giveHP(player);
 				emitLight(playerLoc);
 			}
@@ -87,7 +88,7 @@ public class HealingWaters extends HealingAbility implements AddonAbility {
 						Location playerLoc = entity.getLocation();
 						playerLoc.add(0, 1, 0);
 						JCMethods.displayColoredParticles("#9696E1", playerLoc, 3, Math.random(), Math.random(), Math.random(), 0f, 50);
-						player.getWorld().spawnParticle(Particle.WATER_WAKE, playerLoc, 25, 0, 0, 0, 0.05F);
+						player.getWorld().spawnParticle(Particle.FISHING, playerLoc, 25, 0, 0, 0, 0.05F);
 						giveHPToEntity((LivingEntity) entity);
 						entity.setFireTicks(0);
 						Random rand = new Random();
@@ -103,7 +104,7 @@ public class HealingWaters extends HealingAbility implements AddonAbility {
 				JCMethods.displayColoredParticles("#FFFFFF", playerLoc, 3, Math.random(), Math.random(), Math.random(), 0f, 50);
 				JCMethods.displayColoredParticles("#FFFFFF", playerLoc, 3, Math.random(), Math.random(), Math.random(), 0f);
 
-				player.getWorld().spawnParticle(Particle.WATER_WAKE, playerLoc, 25, 0, 0, 0, 0.05F);
+				player.getWorld().spawnParticle(Particle.FISHING, playerLoc, 25, 0, 0, 0, 0.05F);
 				giveHP(player);
 				player.setFireTicks(0);
 				Random rand = new Random();

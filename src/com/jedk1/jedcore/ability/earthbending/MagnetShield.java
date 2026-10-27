@@ -188,7 +188,7 @@ public class MagnetShield extends MetalAbility implements AddonAbility {
 				double x = currentRadius * Math.cos(angle);
 				double z = currentRadius * Math.sin(angle);
 				Location particleLocation = playerLocation.clone().add(x, currentHeight, z);
-				JedCore.plugin.getParticleAdapter().displayMagneticParticles(particleLocation);
+				com.jedk1.jedcore.JCMethods.displayMagneticParticles(particleLocation);
 			}
 		}
 	}

@@ -284,7 +284,7 @@ public class BloodPuppet extends BloodAbility implements AddonAbility {
 					ThrownPotion tp = missmagus.launchProjectile(ThrownPotion.class, GeneralMethods.getDirection(puppet.getEyeLocation(), e.getEyeLocation()));
 					ItemStack potionItem = new ItemStack(Material.SPLASH_POTION, 1);
 					PotionMeta potion = (PotionMeta) potionItem.getItemMeta();
-					potion.setBasePotionType(JedCore.plugin.getPotionEffectAdapter().getHarmingPotionType());
+					potion.setBasePotionType(com.jedk1.jedcore.JCMethods.getHarmingPotionType());
 					potionItem.setItemMeta(potion);
 					tp.setItem(potionItem);
 					tp.setVelocity(GeneralMethods.getDirection(puppet.getEyeLocation(), e.getEyeLocation()).multiply(0.125));

@@ -127,7 +127,7 @@ public class WallRun extends ChiAbility implements AddonAbility {
 
 		if (particles) {
 			player.getWorld().spawnParticle(Particle.CRIT, player.getLocation(), 4, Math.random(), Math.random(), Math.random(), 0);
-			player.getWorld().spawnParticle(Particle.BLOCK_CRACK, player.getLocation(), 3, Math.random(), Math.random(), Math.random(), 0.1, Material.STONE.createBlockData());
+			player.getWorld().spawnParticle(Particle.BLOCK, player.getLocation(), 3, Math.random(), Math.random(), Math.random(), 0.1, Material.STONE.createBlockData());
 			AirAbility.playAirbendingParticles(player.getLocation(), 5);
 		}
 

@@ -15,8 +15,8 @@ import com.jedk1.jedcore.ability.firebending.FirePunch;
 import com.jedk1.jedcore.ability.firebending.FireSki;
 import com.jedk1.jedcore.ability.waterbending.IceClaws;
 import com.jedk1.jedcore.ability.waterbending.IceWall;
-import com.jedk1.jedcore.util.LightManager;
 import com.jedk1.jedcore.util.RegenTempBlock;
+
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
@@ -208,7 +208,7 @@ public class JCListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void projectKorraReload(BendingReloadEvent event) {
 		final CommandSender sender = event.getSender();
-		LightManager.get().restart();
+
 		// There's a PK bug where a new collision manager is set on reload without stopping the old task.
 		ProjectKorra.getCollisionManager().stopCollisionDetection();
 		new BukkitRunnable() {

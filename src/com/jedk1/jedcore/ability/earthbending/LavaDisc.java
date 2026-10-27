@@ -519,13 +519,13 @@ public class LavaDisc extends LavaAbility implements AddonAbility {
 			angle += 1;
 			if (angle > 360) angle = 0;
 			for (Location l : JCMethods.getCirclePoints(location, 20, 1, angle)) {
-				location.getWorld().spawnParticle(Particle.REDSTONE, l, 0, 196 / 255.0, 93 / 255.0, 0, 0.005F, new Particle.DustOptions(Color.fromRGB(196, 93, 0), 1));
+				location.getWorld().spawnParticle(Particle.DUST, l, 0, 196 / 255.0, 93 / 255.0, 0, 0.005F, new Particle.DustOptions(Color.fromRGB(196, 93, 0), 1));
 				if (largeLava && damageBlocks)
 					damageBlocks(l);
 			}
 			for (Location l : JCMethods.getCirclePoints(location, 10, 0.5, angle)) {
 				location.getWorld().spawnParticle(Particle.FLAME, l, 1, 0, 0, 0, 0.01);
-				location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, l, 1, 0, 0, 0, 0.05);
+				location.getWorld().spawnParticle(Particle.SMOKE, l, 1, 0, 0, 0, 0.05);
 				if (largeLava && damageBlocks)
 					damageBlocks(l);
 			}
@@ -535,7 +535,7 @@ public class LavaDisc extends LavaAbility implements AddonAbility {
 			Block block = l.getBlock();
 			if (EarthAbility.getMovedEarth().containsKey(block)) {
 				location.getWorld().spawnParticle(Particle.LAVA, l, 20, 0.5, 0.5, 0.5, 0.2);
-				location.getWorld().spawnParticle(Particle.BLOCK_CRACK, l, 15, 0.3, 0.3, 0.3, 0.15, Material.LAVA.createBlockData());
+				location.getWorld().spawnParticle(Particle.BLOCK, l, 15, 0.3, 0.3, 0.3, 0.15, Material.LAVA.createBlockData());
 				return;
 			}
 			if (!RegionProtection.isRegionProtected(player, l, LavaDisc.this)) {

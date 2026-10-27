@@ -169,7 +169,7 @@ public class AbilityListener implements Listener {
 			var loc = fp.getRightHandPos();
 			loc.getWorld().spawnParticle(Particle.LAVA, loc, 5, 0.1, 0.1, 0.1, 0.05);
 			loc.getWorld().spawnParticle(Particle.FLAME, loc, 3, 0.1, 0.1, 0.1, 0.01);
-			loc.getWorld().spawnParticle(Particle.SMOKE_NORMAL, loc, 2, 0.05, 0.05, 0.05, 0.01);
+			loc.getWorld().spawnParticle(Particle.SMOKE, loc, 2, 0.05, 0.05, 0.05, 0.01);
 			loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_EXTINGUISH, 0.3f, 1.4f);
 			item.remove();
 		}

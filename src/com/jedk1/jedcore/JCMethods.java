@@ -9,12 +9,14 @@ import com.jedk1.jedcore.util.*;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.region.RegionProtection;
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -25,35 +27,13 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 public class JCMethods {
-
-	// todo: either use PKs isPlant or the registry/tags (with config)
-	private static final ArrayList<Material> SMALL_PLANTS = new ArrayList<Material>(){{
-		addAll(Arrays.asList(Material.GRASS, Material.FERN, Material.POPPY, Material.DANDELION, Material.OAK_SAPLING,
-				Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING, Material.JUNGLE_SAPLING, Material.ACACIA_SAPLING,
-				Material.DARK_OAK_SAPLING, Material.ALLIUM, Material.ORANGE_TULIP, Material.PINK_TULIP, Material.RED_TULIP,
-				Material.WHITE_TULIP, Material.ROSE_BUSH, Material.BLUE_ORCHID, Material.LILAC, Material.OXEYE_DAISY,
-				Material.AZURE_BLUET, Material.PEONY, Material.SUNFLOWER, Material.LARGE_FERN, Material.RED_MUSHROOM,
-				Material.BROWN_MUSHROOM, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.WHEAT, Material.TALL_GRASS,
-				Material.BEETROOTS, Material.CARROTS, Material.POTATOES, Material.CRIMSON_FUNGUS, Material.WARPED_FUNGUS,
-				Material.BAMBOO, Material.BAMBOO_SAPLING));
-
-		int serverVersion = JCMethods.getMCVersion();
-		if (serverVersion >= 1170) {
-			add(Material.getMaterial("AZALEA"));
-			add(Material.getMaterial("FLOWERING_AZALEA"));
-			add(Material.getMaterial("FLOWERING_AZALEA_LEAVES"));
-			add(Material.getMaterial("AZALEA_LEAVES"));
-			add(Material.getMaterial("BIG_DRIPLEAF"));
-			add(Material.getMaterial("BIG_DRIPLEAF_STEM"));
-			add(Material.getMaterial("SMALL_DRIPLEAF"));
-			add(Material.getMaterial("HANGING_ROOTS"));
-			add(Material.getMaterial("GLOW_LICHEN"));
-			add(Material.getMaterial("CAVE_VINES"));
-			add(Material.getMaterial("CAVE_VINES_PLANT"));
-		}
-	}};
 
 	private static List<String> worlds = new ArrayList<>();
 	private static List<String> combos = new ArrayList<>();
@@ -332,7 +312,57 @@ public class JCMethods {
 	}
 
 	public static void displayColoredParticles(String hex, Location location, int amount, double offsetX, double offsetY, double offsetZ, double extra, int alpha) {
-		JedCore.plugin.getParticleAdapter().displayColoredParticles(hex, location, amount, offsetX, offsetY, offsetZ, extra, alpha);
+		if (location.getWorld() == null) return;
+		int[] color = hexToRgb(hex);
+		location.getWorld().spawnParticle(Particle.ENTITY_EFFECT, location, amount, extra, offsetX, offsetY, offsetZ, Color.fromARGB(alpha, color[0], color[1], color[2]));
+	}
+
+	public static void displayMagneticParticles(Location location) {
+		if (location.getWorld() == null) return;
+		location.getWorld().spawnParticle(Particle.MYCELIUM, location, 1, 0, 0, 0, 0.01);
+	}
+
+	private static int[] hexToRgb(String hex) {
+		return new int[] {
+				Integer.valueOf(hex.substring(1, 3), 16),
+				Integer.valueOf(hex.substring(3, 5), 16),
+				Integer.valueOf(hex.substring(5, 7), 16)
+		};
+	}
+
+	public static PotionType getHarmingPotionType() {
+		return PotionType.HARMING;
+	}
+
+	public static PotionEffect getSlownessEffect(int duration, int strength) {
+		return new PotionEffect(PotionEffectType.SLOWNESS, duration / 50, strength - 1);
+	}
+
+	public static PotionEffect getResistanceEffect(int duration, int strength) {
+		return new PotionEffect(PotionEffectType.RESISTANCE, duration / 50, strength - 1);
+	}
+
+	public static PotionEffect getNauseaEffect(int duration) {
+		return new PotionEffect(PotionEffectType.NAUSEA, duration / 50, 1);
+	}
+
+	public static void applyJumpBoost(Player player, int duration, int strength) {
+		if (player.hasPotionEffect(PotionEffectType.JUMP_BOOST)) {
+			player.removePotionEffect(PotionEffectType.JUMP_BOOST);
+		}
+		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration / 50, strength - 1));
+	}
+
+	public static boolean hasWaterPotion(Inventory inventory) {
+		if (inventory.contains(Material.POTION)) {
+			ItemStack item = inventory.getItem(inventory.first(Material.POTION));
+			if (item == null) return false;
+			PotionMeta meta = (PotionMeta) item.getItemMeta();
+			if (meta == null) return false;
+			PotionType potionType = meta.getBasePotionType();
+			return potionType == PotionType.WATER;
+		}
+		return false;
 	}
 
 	public static void emitLight(Location loc) {
@@ -355,27 +385,5 @@ public class JCMethods {
 		RegenTempBlock.revertAll();
 		JedCore.plugin.initializeCollisions();
 		FireTick.loadMethod();
-	}
-
-	// todo: fragile/untested
-	public static int getMCVersion() {
-		String rawVersion = Bukkit.getBukkitVersion().split("-", 2)[0];
-
-		Pattern pattern = Pattern.compile("^\\d+\\.\\d+(\\.\\d+)?");
-		Matcher matcher = pattern.matcher(rawVersion);
-
-		if (!matcher.find()) {
-			JedCore.log.warning("Version not valid! Cannot parse version \"" + rawVersion + "\"");
-			return 1164;
-		}
-
-		String version = matcher.group();
-
-		String[] split = version.split("\\.");
-		int major = Integer.parseInt(split[0]);
-		int minor = Integer.parseInt(split[1]);
-		int fix = (split.length == 3) ? Integer.parseInt(split[2]) : 0;
-
-		return major * 1000 + minor * 10 + fix;
 	}
 }

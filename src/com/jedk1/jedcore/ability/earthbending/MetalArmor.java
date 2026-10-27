@@ -96,7 +96,7 @@ public class MetalArmor extends EarthAbility implements AddonAbility {
 
 				player.getInventory().setArmorContents(armors);
 
-				PotionEffect resistance = JedCore.plugin.getPotionEffectAdapter().getResistanceEffect(resistDuration, resistStrength);
+				PotionEffect resistance = com.jedk1.jedcore.JCMethods.getResistanceEffect(resistDuration, resistStrength);
 				new TempPotionEffect(player, resistance);
 			}
 

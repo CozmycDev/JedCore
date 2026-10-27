@@ -155,7 +155,7 @@ public class SonicBlast extends AirAbility implements AddonAbility {
 				DamageHandler.damageEntity(entity, damage, this);
 				LivingEntity lE = (LivingEntity) entity;
 
-				lE.addPotionEffect(JedCore.plugin.getPotionEffectAdapter().getNauseaEffect(nauseaDur));
+				lE.addPotionEffect(com.jedk1.jedcore.JCMethods.getNauseaEffect(nauseaDur));
 				lE.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDur/50, 1));
 				return true;
 			});

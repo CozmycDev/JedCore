@@ -174,7 +174,7 @@ public class FireSki extends FireAbility implements AddonAbility {
 		for (Location l : JCMethods.getLinePoints(player.getEyeLocation().add(0, -0.5, 0).add(getRightHeadDirection(player).multiply(0.2)), right1, 6)) {
 			size += 0.05;
 			playFirebendingParticles(l, 4, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01));
-			l.getWorld().spawnParticle(Particle.SMOKE_NORMAL, l, 1, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01), 0.08);
+			l.getWorld().spawnParticle(Particle.SMOKE, l, 1, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01), 0.08);
 			JCMethods.emitLight(l);
 		}
 
@@ -182,7 +182,7 @@ public class FireSki extends FireAbility implements AddonAbility {
 		for (Location l : JCMethods.getLinePoints(player.getEyeLocation().add(0, -0.5, 0).add(getLeftHeadDirection(player).multiply(0.2)), left1, 6)) {
 			size += 0.05;
 			playFirebendingParticles(l, 4, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01));
-			l.getWorld().spawnParticle(Particle.SMOKE_NORMAL, l, 1, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01), 0.08);
+			l.getWorld().spawnParticle(Particle.SMOKE, l, 1, (Math.random() * size + 0.01), (Math.random() * size + 0.01), (Math.random() * size + 0.01), 0.08);
 			JCMethods.emitLight(l);
 		}
 	}

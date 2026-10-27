@@ -204,7 +204,7 @@ public class AirBreath extends AirAbility implements AddonAbility {
 
 	private void displayBeamParticles(Location loc, double size) {
 		if (isWater(loc.getBlock())) {
-			loc.getWorld().spawnParticle(Particle.WATER_BUBBLE, loc, 0, Math.random(), Math.random(), Math.random(), size);
+			loc.getWorld().spawnParticle(Particle.BUBBLE, loc, 0, Math.random(), Math.random(), Math.random(), size);
 		}
 
 		loc.getWorld().spawnParticle(Particle.CLOUD, loc, 0, Math.random(), Math.random(), Math.random(), size);

@@ -5,10 +5,6 @@ import java.util.logging.*;
 
 import com.google.common.reflect.ClassPath;
 import com.jedk1.jedcore.util.*;
-import com.jedk1.jedcore.util.versionadapter.ParticleAdapter;
-import com.jedk1.jedcore.util.versionadapter.ParticleAdapterFactory;
-import com.jedk1.jedcore.util.versionadapter.PotionEffectAdapter;
-import com.jedk1.jedcore.util.versionadapter.PotionEffectAdapterFactory;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,8 +24,7 @@ public class JedCore extends JavaPlugin {
 	public static String version;
 	public static boolean logDebug;
 
-    private ParticleAdapter particleAdapter;
-	private PotionEffectAdapter potionEffectAdapter;
+
 
 	@Override
 	public void onEnable() {
@@ -53,12 +48,6 @@ public class JedCore extends JavaPlugin {
 		new Commands();
 
 		FireTick.loadMethod();
-
-        ParticleAdapterFactory particleAdapterFactory = new ParticleAdapterFactory();
-		particleAdapter = particleAdapterFactory.getAdapter();
-
-		PotionEffectAdapterFactory potionEffectAdapterFactory = new PotionEffectAdapterFactory();
-		potionEffectAdapter = potionEffectAdapterFactory.getAdapter();
 
 		checkMaintainer();
 
@@ -124,11 +113,5 @@ public class JedCore extends JavaPlugin {
 		}
 	}
 
-	public ParticleAdapter getParticleAdapter() {
-		return this.particleAdapter;
-	}
 
-	public PotionEffectAdapter getPotionEffectAdapter() {
-		return this.potionEffectAdapter;
-	}
 }

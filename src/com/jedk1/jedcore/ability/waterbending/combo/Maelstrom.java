@@ -187,7 +187,7 @@ public class Maelstrom extends WaterAbility implements AddonAbility, ComboAbilit
 				for (int j = 0; j < 2; j++) {
 					wave.add(b.getRelative(BlockFace.DOWN, j));
 					new RegenTempBlock(b.getRelative(BlockFace.DOWN, j), Material.WATER, Material.WATER.createBlockData(bd -> ((Levelled) bd).setLevel(1)), 0);
-					loc.getWorld().spawnParticle(Particle.WATER_SPLASH, loc, 3, Math.random(), Math.random(), Math.random(), 0);
+					loc.getWorld().spawnParticle(Particle.FISHING, loc, 3, Math.random(), Math.random(), Math.random(), 0);
 				}
 			}
 			newAngle += 15;

@@ -76,7 +76,7 @@ public class FirePunch extends FireAbility implements AddonAbility {
 		Location hand = getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.75D)).toLocation(player.getWorld());
 
 		playFirebendingParticles(hand, 3, 0, 0, 0);
-		hand.getWorld().spawnParticle(Particle.SMOKE_NORMAL, hand, 1);
+		hand.getWorld().spawnParticle(Particle.SMOKE, hand, 1);
 		JCMethods.emitLight(hand);
 	}
 

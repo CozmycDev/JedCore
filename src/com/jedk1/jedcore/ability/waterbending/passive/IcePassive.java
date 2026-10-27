@@ -50,7 +50,7 @@ public class IcePassive {
 
 			if (!player.hasPermission("bending.ability.IceSkate")) continue;
 
-			player.getWorld().spawnParticle(Particle.SNOW_SHOVEL, player.getLocation().clone().add(0, 0.2, 0), 15, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
+			player.getWorld().spawnParticle(Particle.POOF, player.getLocation().clone().add(0, 0.2, 0), 15, Math.random() / 2, Math.random() / 2, Math.random() / 2, 0);
 			player.removePotionEffect(PotionEffectType.SPEED);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, config.duration, config.speedFactor));
 		}

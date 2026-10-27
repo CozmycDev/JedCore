@@ -110,14 +110,14 @@ public class WakeFishing extends WaterAbility implements AddonAbility {
 		if (point == 32)
 			point = 0;
 		for (int i = 0; i < 4; i++) {
-			location.getWorld().spawnParticle(Particle.WATER_SPLASH,
+			location.getWorld().spawnParticle(Particle.SPLASH,
 					getCirclePoints(focusedBlock.getLocation().clone().add(0.5, 0, 0.5), 32, (i * 90), 1).get(point),
 					3, 0, 0, 0, 0.05);
-			location.getWorld().spawnParticle(Particle.WATER_WAKE,
+			location.getWorld().spawnParticle(Particle.FISHING,
 					getCirclePoints(focusedBlock.getLocation().clone().add(0.5, -0.6, 0.5), 32, (i * 90), 1).get(point),
 					1, 0, 0, 0, 0.02);
 		}
-		location.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
+		location.getWorld().spawnParticle(Particle.SMOKE,
 				focusedBlock.getLocation().clone().add(0.5, 0.5, 0.5),
 				2, 0, 0, 0, 0.001);
 	}

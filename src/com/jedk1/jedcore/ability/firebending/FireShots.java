@@ -143,7 +143,7 @@ public class FireShots extends FireAbility implements AddonAbility {
 				} else {
 					location.getWorld().spawnParticle(Particle.FLAME, location, 5, 0.0, 0.0, 0.0, 0.02);
 				}
-				location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 2, 0.0, 0.0, 0.0, 0.01);
+				location.getWorld().spawnParticle(Particle.SMOKE, location, 2, 0.0, 0.0, 0.0, 0.01);
 				JCMethods.emitLight(location);
 
 				Sphere collider = new Sphere(location.toVector(), collisionRadius);
@@ -267,7 +267,7 @@ public class FireShots extends FireAbility implements AddonAbility {
 	private void displayFireBalls() {
 		playFirebendingParticles(getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld()), 3, 0, 0, 0);
 
-		getRightHandPos().getWorld().spawnParticle(Particle.SMOKE_NORMAL, getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld()), 3, 0, 0, 0, 0.01);
+		getRightHandPos().getWorld().spawnParticle(Particle.SMOKE, getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld()), 3, 0, 0, 0, 0.01);
 		JCMethods.emitLight(getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.8D)).toLocation(player.getWorld()));
 	}
 

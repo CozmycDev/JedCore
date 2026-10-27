@@ -264,7 +264,7 @@ public class MagmaBlast extends LavaAbility implements AddonAbility, ComboAbilit
 	private void playParticles(Location location) {
 		location.add(0.5, 0.5, 0.5);
 		location.getWorld().spawnParticle(Particle.LAVA, location, 2, Math.random(), Math.random(), Math.random(), 0f);
-		location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 2, Math.random(), Math.random(), Math.random(), 0f);
+		location.getWorld().spawnParticle(Particle.SMOKE, location, 2, Math.random(), Math.random(), Math.random(), 0f);
 		for (int i = 0; i < 10; i++) {
 			GeneralMethods.displayColoredParticle("FFA400", getOffsetLocation(location, 2));
 			GeneralMethods.displayColoredParticle("FF8C00", getOffsetLocation(location, 2));
@@ -399,8 +399,8 @@ public class MagmaBlast extends LavaAbility implements AddonAbility, ComboAbilit
 		float speed = 0.1f;
 
 		location.getWorld().spawnParticle(Particle.FLAME, location, PARTICLE_COUNT, randomBinomial(radius), randomBinomial(radius), randomBinomial(radius), speed);
-		location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, PARTICLE_COUNT, randomBinomial(radius), randomBinomial(radius), randomBinomial(radius), speed);
-		location.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, location, PARTICLE_COUNT, randomBinomial(radius), randomBinomial(radius), randomBinomial(radius), speed);
+		location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location, PARTICLE_COUNT, randomBinomial(radius), randomBinomial(radius), randomBinomial(radius), speed);
+		location.getWorld().spawnParticle(Particle.FIREWORK, location, PARTICLE_COUNT, randomBinomial(radius), randomBinomial(radius), randomBinomial(radius), speed);
 
 		ThreadLocalRandom rand = ThreadLocalRandom.current();
 

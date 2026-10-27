@@ -208,10 +208,10 @@ public class ESStream extends AvatarAbility implements AddonAbility {
 
 	private void displayCollisionParticles() {
 		stream.getWorld().spawnParticle(Particle.FLAME, stream, 20, 0.5F, 0.5F, 0.5F, 0.5F);
-		stream.getWorld().spawnParticle(Particle.SMOKE_LARGE, stream, 20, 0.5F, 0.5F, 0.5F, 0.5F);
-		stream.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, stream, 20, 0.5F, 0.5F, 0.5F, 0.5F);
-		stream.getWorld().spawnParticle(Particle.SMOKE_LARGE, stream, 20, 0.5F, 0.5F, 0.5F, 0.5F);
-		stream.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, stream, 5, 0.5F, 0.5F, 0.5F, 0.5F);
+		stream.getWorld().spawnParticle(Particle.LARGE_SMOKE, stream, 20, 0.5F, 0.5F, 0.5F, 0.5F);
+		stream.getWorld().spawnParticle(Particle.FIREWORK, stream, 20, 0.5F, 0.5F, 0.5F, 0.5F);
+		stream.getWorld().spawnParticle(Particle.LARGE_SMOKE, stream, 20, 0.5F, 0.5F, 0.5F, 0.5F);
+		stream.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, stream, 5, 0.5F, 0.5F, 0.5F, 0.5F);
 	}
 
 	private void playCollisionSounds(ThreadLocalRandom rand) {

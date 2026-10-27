@@ -150,7 +150,7 @@ public class ESFire extends AvatarAbility implements AddonAbility {
 	private void displayAttackParticles() {
 		Particle fireParticle = bPlayer.hasSubElement(Element.BLUE_FIRE) ? Particle.SOUL_FIRE_FLAME : Particle.FLAME;
 		location.getWorld().spawnParticle(fireParticle, location, 5, Math.random(), Math.random(), Math.random(), 0.02);
-		location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, 2, Math.random(), Math.random(), Math.random(), 0.01);
+		location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location, 2, Math.random(), Math.random(), Math.random(), 0.01);
 	}
 
 	private void playAttackSoundsAndLight() {

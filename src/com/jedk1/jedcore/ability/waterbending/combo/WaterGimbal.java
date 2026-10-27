@@ -236,7 +236,7 @@ public class WaterGimbal extends WaterAbility implements AddonAbility, ComboAbil
 	// This is to get around the WaterReturn limitation since OctopusForm will currently be using the bottle.
 	private boolean hasWaterBottle(Player player) {
 		PlayerInventory inventory = player.getInventory();
-		return JedCore.plugin.getPotionEffectAdapter().hasWaterPotion(inventory);
+		return com.jedk1.jedcore.JCMethods.hasWaterPotion(inventory);
 	}
 
 	public static void prepareBlast(Player player) {
