@@ -1,13 +1,18 @@
 package com.jedk1.jedcore.ability.waterbending;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
+import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.*;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.earthbending.EarthSmash;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.FireBlastCharged;
+import com.projectkorra.projectkorra.firebending.lightning.Lightning;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.Torrent;
+import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -17,17 +22,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.jedk1.jedcore.JedCore;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.earthbending.EarthSmash;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.FireBlastCharged;
-import com.projectkorra.projectkorra.firebending.lightning.Lightning;
-import com.projectkorra.projectkorra.util.DamageHandler;
-
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.Torrent;
-import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 public class IceWall extends IceAbility implements AddonAbility {
 	public static List<IceWall> instances = new ArrayList<>();

@@ -8,8 +8,9 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.InventoryHolder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class RegenTempBlock {
@@ -72,32 +73,37 @@ public class RegenTempBlock {
 	 * Manages blocks to be reverted.
 	 */
 	public static void manage() {
-		Iterator<Map.Entry<Block, RegenBlockData>> iterator = blocks.entrySet().iterator();
+		List<Map.Entry<Block, RegenBlockData>> due = new ArrayList<>();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Block, RegenBlockData> entry = iterator.next();
+		for (Map.Entry<Block, RegenBlockData> entry : blocks.entrySet()) {
+			if (System.currentTimeMillis() >= entry.getValue().endTime) {
+				due.add(entry);
+			}
+		}
 
+		// Restore lower blocks first so attached blocks (such as crops) have their support back.
+		due.sort((a, b) -> Integer.compare(a.getKey().getY(), b.getKey().getY()));
+
+		for (Map.Entry<Block, RegenBlockData> entry : due) {
 			Block b = entry.getKey();
 			RegenBlockData blockData = entry.getValue();
 
-			if (System.currentTimeMillis() >= blockData.endTime) {
-				TempBlock tb = temps.get(b);
-				if (tb != null) {
-					tb.revertBlock();
-					temps.remove(b);
-				}
+			TempBlock tb = temps.get(b);
+			if (tb != null) {
+				tb.revertBlock();
+				temps.remove(b);
+			}
 
-				BlockState bs = states.get(b);
-				if (bs != null) {
-					bs.update(true);
-					states.remove(b);
-				}
+			BlockState bs = states.get(b);
+			if (bs != null) {
+				bs.update(true);
+				states.remove(b);
+			}
 
-				iterator.remove();
+			blocks.remove(b);
 
-				if (blockData.callback != null) {
-					blockData.callback.onRegen(b);
-				}
+			if (blockData.callback != null) {
+				blockData.callback.onRegen(b);
 			}
 		}
 	}
@@ -125,7 +131,10 @@ public class RegenTempBlock {
 	 * Reverts all blocks.
 	 */
 	public static void revertAll() {
-		for (Block b : blocks.keySet()) {
+		List<Block> sorted = new ArrayList<>(blocks.keySet());
+		sorted.sort((a, b) -> Integer.compare(a.getY(), b.getY()));
+
+		for (Block b : sorted) {
 			if (temps.containsKey(b)) {
 				TempBlock tb = temps.get(b);
 				tb.revertBlock();

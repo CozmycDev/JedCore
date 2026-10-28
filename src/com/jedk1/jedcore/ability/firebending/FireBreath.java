@@ -3,7 +3,6 @@ package com.jedk1.jedcore.ability.firebending;
 import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.jedk1.jedcore.listener.CommandListener;
 import com.jedk1.jedcore.util.FireTick;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -17,7 +16,6 @@ import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.ChatUtil;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
 import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
@@ -31,11 +29,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class FireBreath extends FireAbility implements AddonAbility {
 
@@ -210,26 +204,33 @@ public class FireBreath extends FireAbility implements AddonAbility {
 				if (ticks >= 301)
 					ticks = 0;
 				if (isInRange(ticks, 0, 50)) {
+					LightManager.createLight(loc).emit();
 					for (int i = 0; i < 6; i++)
 						displayParticle(getOffsetLocation(loc, offset), 1, 140, 32, 32);
 				} else if (isInRange(ticks, 51, 100)) {
+					LightManager.createLight(loc).emit();
 					for (int i = 0; i < 6; i++)
 						displayParticle(getOffsetLocation(loc, offset), 1, 196, 93, 0);
 				} else if (isInRange(ticks, 101, 150)) {
+					LightManager.createLight(loc).emit();
 					for (int i = 0; i < 6; i++)
 						displayParticle(getOffsetLocation(loc, offset), 1, 186, 166, 37);
 				} else if (isInRange(ticks, 151, 200)) {
+					LightManager.createLight(loc).emit();
 					for (int i = 0; i < 6; i++)
 						displayParticle(getOffsetLocation(loc, offset), 1, 36, 171, 47);
 				} else if (isInRange(ticks, 201, 250)) {
+					LightManager.createLight(loc).emit();
 					for (int i = 0; i < 6; i++)
 						displayParticle(getOffsetLocation(loc, offset), 1, 36, 142, 171);
 				} else if (isInRange(ticks, 251, 300)) {
+					LightManager.createLight(loc).emit();
 					for (int i = 0; i < 6; i++)
 						displayParticle(getOffsetLocation(loc, offset), 1, 128, 36, 171);
 				}
 			} else {
 				playFirebendingParticles(loc, particles, Math.random(), Math.random(), Math.random());
+				LightManager.createLight(loc).emit();
 				loc.getWorld().spawnParticle(Particle.SMOKE, loc, particles, Math.random(), Math.random(), Math.random(), size);
 			}
 		}
@@ -261,8 +262,7 @@ public class FireBreath extends FireAbility implements AddonAbility {
 		String unbindMsg = ChatUtil.color(config.getString("Abilities.Fire.FireBreath.RainbowBreath.DisabledMessage", ""));
 		String deniedMsg = ChatUtil.color(config.getString("Abilities.Fire.FireBreath.RainbowBreath.NoAccess", ""));
 
-		if (easterEgg && (player.hasPermission("bending.ability.FireBreath.RainbowBreath") 
-				|| Arrays.asList(CommandListener.developers).contains(player.getUniqueId().toString()))) {
+		if (easterEgg && player.hasPermission("bending.ability.FireBreath.RainbowBreath")) {
 			if (activate) {
 				if (!rainbowPlayer.contains(player.getUniqueId())) {
 					rainbowPlayer.add(player.getUniqueId());

@@ -13,7 +13,6 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
 import org.bukkit.Location;
@@ -26,11 +25,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.stream.Collectors.toList;

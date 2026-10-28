@@ -5,7 +5,6 @@ import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.IceAbility;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.World;

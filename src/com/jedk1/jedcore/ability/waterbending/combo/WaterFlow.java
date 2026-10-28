@@ -7,7 +7,6 @@ import com.jedk1.jedcore.util.MaterialUtil;
 import com.jedk1.jedcore.util.RegenTempBlock;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.*;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.airbending.AirSpout;

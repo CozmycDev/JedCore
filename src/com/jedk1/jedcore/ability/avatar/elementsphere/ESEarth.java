@@ -2,32 +2,25 @@ package com.jedk1.jedcore.ability.avatar.elementsphere;
 
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.jedk1.jedcore.util.RegenTempBlock;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
 import com.projectkorra.projectkorra.util.TempFallingBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ESEarth extends AvatarAbility implements AddonAbility {
 

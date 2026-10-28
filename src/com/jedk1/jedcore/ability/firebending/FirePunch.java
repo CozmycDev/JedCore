@@ -1,6 +1,5 @@
 package com.jedk1.jedcore.ability.firebending;
 
-import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.util.FireTick;
@@ -12,7 +11,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
+import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
@@ -76,6 +75,7 @@ public class FirePunch extends FireAbility implements AddonAbility {
 		Location hand = getRightHandPos().toVector().add(player.getEyeLocation().getDirection().clone().multiply(.75D)).toLocation(player.getWorld());
 
 		playFirebendingParticles(hand, 3, 0, 0, 0);
+		LightManager.createLight(hand).emit();
 		hand.getWorld().spawnParticle(Particle.SMOKE, hand, 1, 0.0, 0.0, 0.0, 0.01);
 	}
 
@@ -97,6 +97,7 @@ public class FirePunch extends FireAbility implements AddonAbility {
 	public void punch(LivingEntity target) {
 		remove();
 		DamageHandler.damageEntity(target, damage, this);
+		LightManager.createLight(target.getLocation()).emit();
 		FireTick.set(target, fireTicks / 50);
 		if (cooldown > fireTicks) {
 			new FireDamageTimer(target, player, this);

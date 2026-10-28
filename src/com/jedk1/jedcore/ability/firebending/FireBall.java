@@ -1,6 +1,5 @@
 package com.jedk1.jedcore.ability.firebending;
 
-import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.collision.CollisionDetector;
 import com.jedk1.jedcore.collision.Sphere;
@@ -20,7 +19,6 @@ import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
 import com.projectkorra.projectkorra.util.LightManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -136,6 +134,8 @@ public class FireBall extends FireAbility implements AddonAbility {
 			for (int j = 0; j < 5; j++) {
 				playFirebendingParticles(location, 1, 0, 0, 0);
 			}
+
+			LightManager.createLight(location).emit();
 
 			boolean hitTarget = CollisionDetector.checkEntityCollisions(player, new Sphere(location.toVector(), collisionRadius), this::doDamage);
 

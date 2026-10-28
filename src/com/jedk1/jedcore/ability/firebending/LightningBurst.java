@@ -11,7 +11,6 @@ import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
 import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.MovementHandler;
 import org.bukkit.Location;

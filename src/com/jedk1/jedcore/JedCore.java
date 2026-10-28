@@ -1,20 +1,19 @@
 package com.jedk1.jedcore;
 
-import java.io.IOException;
-import java.util.logging.*;
-
 import com.google.common.reflect.ClassPath;
-import com.jedk1.jedcore.util.*;
-import org.bukkit.World;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.jedk1.jedcore.command.Commands;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.listener.AbilityListener;
 import com.jedk1.jedcore.listener.CommandListener;
 import com.jedk1.jedcore.listener.JCListener;
+import com.jedk1.jedcore.util.*;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import org.bukkit.World;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.IOException;
+import java.util.logging.Logger;
 
 public class JedCore extends JavaPlugin {
 
@@ -24,8 +23,6 @@ public class JedCore extends JavaPlugin {
 	public static String version;
 	public static boolean logDebug;
 
-
-
 	@Override
 	public void onEnable() {
 		plugin = this;
@@ -33,7 +30,7 @@ public class JedCore extends JavaPlugin {
 		new JedCoreConfig(this);
 
 		logDebug = JedCoreConfig.getConfig((World)null).getBoolean("Properties.LogDebug");
-		
+
 		dev = this.getDescription().getAuthors().toString().replace("[", "").replace("]", "");
 		version = this.getDescription().getVersion();
 
@@ -58,7 +55,7 @@ public class JedCore extends JavaPlugin {
 				initializeCollisions();
 			}
 		}.runTaskLater(this, 1);
-		
+
 		try {
 	        MetricsLite metrics = new MetricsLite(this);
 	        metrics.start();
@@ -102,7 +99,7 @@ public class JedCore extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void onDisable() {
 		RegenTempBlock.revertAll();
 	}
@@ -112,6 +109,4 @@ public class JedCore extends JavaPlugin {
 			plugin.getLogger().info(message);
 		}
 	}
-
-
 }

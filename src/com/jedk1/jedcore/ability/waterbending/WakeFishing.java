@@ -7,7 +7,6 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;

@@ -1,15 +1,10 @@
 package com.jedk1.jedcore.ability.firebending;
 
-import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.collision.CollisionDetector;
 import com.jedk1.jedcore.collision.Sphere;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.jedk1.jedcore.policies.removal.CannotBendRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.CompositeRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.IsDeadRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.IsOfflineRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.SwappedSlotsRemovalPolicy;
+import com.jedk1.jedcore.policies.removal.*;
 import com.jedk1.jedcore.util.FireTick;
 import com.jedk1.jedcore.util.MaterialUtil;
 import com.jedk1.jedcore.util.RegenTempBlock;
@@ -23,7 +18,6 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
 import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.*;
@@ -496,12 +490,18 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 		public int explode(Location location, double size, double damage, int fireTick) {
 			render(location);
 
-			if (!destroy) {
-				return 0;
+			int destroyCount = 0;
+
+			if (destroy) {
+				location.getWorld().createExplosion(location, 0.0F);
+				List<Location> destroyed = destroyBlocks(location, (int) size);
+				destroyCount = destroyed.size();
+
+				for (Location l : destroyed) {
+					placeRandomBlock(l);
+				}
 			}
 
-			location.getWorld().createExplosion(location, 0.0F);
-			int destroyCount = destroyBlocks(location, (int)size);
 			damageEntities(location, size, damage, fireTick);
 
 			return destroyCount;
@@ -520,18 +520,19 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 			location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
 		}
 
-		private int destroyBlocks(Location location, int size) {
-			int count = 0;
+		private List<Location> destroyBlocks(Location location, int size) {
+			List<Location> locations = GeneralMethods.getCircle(location, size, size, false, true, 0);
+			locations.sort((a, b) -> Integer.compare(b.getBlockY(), a.getBlockY()));
 
-			for (Location l : GeneralMethods.getCircle(location, size, size, false, true, 0)) {
-				if (!RegionProtection.isRegionProtected(Combustion.this, l)) {
-					if (destroyBlock(l)) {
-						++count;
-					}
+			List<Location> destroyed = new ArrayList<>();
+
+			for (Location l : locations) {
+				if (!RegionProtection.isRegionProtected(Combustion.this, l) && destroyBlock(l)) {
+					destroyed.add(l);
 				}
 			}
 
-			return count;
+			return destroyed;
 		}
 
 		private void damageEntities(Location location, double size, double damage, int fireTick) {
@@ -543,15 +544,6 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 					}
 				}
 			}
-		}
-
-		protected void placeRandomFire(Location location) {
-			int chance = rand.nextInt(3);
-
-			if ((!(location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ()).getType().isSolid())) || (chance != 0))
-				return;
-
-			location.getBlock().setType(Material.FIRE);
 		}
 
 		protected void placeRandomBlock(Location location) {
@@ -587,10 +579,8 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 			if (TempBlock.isTempBlock(block))
 				TempBlock.removeBlock(block);
 
-			if (!MaterialUtil.isTransparent(block) && !blocks.contains(block.getType()) && !MaterialUtil.isSign(block)) {
+			if (!block.isEmpty() && !blocks.contains(block.getType()) && !MaterialUtil.isSign(block)) {
 				new RegenTempBlock(block, Material.AIR, Material.AIR.createBlockData(), regenTime, false);
-				placeRandomBlock(l);
-				placeRandomFire(l);
 
 				return true;
 			}
@@ -608,11 +598,9 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 		public boolean destroyBlock(Location l) {
 			Block block = l.getBlock();
 
-			if (!MaterialUtil.isTransparent(block) && !blocks.contains(block.getType()) && !MaterialUtil.isSign(block)) {
+			if (!block.isEmpty() && !blocks.contains(block.getType()) && !MaterialUtil.isSign(block)) {
 				Block newBlock = l.getWorld().getBlockAt(l);
 				newBlock.setType(Material.AIR);
-				placeRandomBlock(l);
-				placeRandomFire(l);
 
 				return true;
 			}

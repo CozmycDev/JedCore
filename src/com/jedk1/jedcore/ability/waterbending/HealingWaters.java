@@ -3,7 +3,6 @@ package com.jedk1.jedcore.ability.waterbending;
 import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -11,7 +10,6 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.region.RegionProtection;
-
 import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
@@ -21,7 +19,6 @@ import org.bukkit.Particle;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

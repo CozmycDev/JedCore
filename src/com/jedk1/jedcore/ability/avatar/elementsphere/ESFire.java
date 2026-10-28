@@ -1,6 +1,5 @@
 package com.jedk1.jedcore.ability.avatar.elementsphere;
 
-import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.projectkorra.projectkorra.Element;

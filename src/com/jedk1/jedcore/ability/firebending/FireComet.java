@@ -12,7 +12,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
-
+import com.projectkorra.projectkorra.util.LightManager;
 import com.projectkorra.projectkorra.util.TempFallingBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,6 +45,7 @@ public class FireComet extends FireAbility implements AddonAbility {
 	private double blastRadius;
 	private boolean cometOnly;
 	private boolean avatarBypass;
+	private boolean damageBlocks;
 	private Location location;
 	private Location launchLoc;
 	private Vector vector;
@@ -97,6 +98,7 @@ public class FireComet extends FireAbility implements AddonAbility {
 
 		regen = config.getLong("Abilities.Fire.FireComet.RegenDelay");
 		range = config.getInt("Abilities.Fire.FireComet.Range");
+		damageBlocks = config.getBoolean("Abilities.Fire.FireComet.DamageBlocks");
 		cometOnly = config.getBoolean("Abilities.Fire.FireComet.SozinsCometOnly");
 		avatarBypass = config.getBoolean("Abilities.Fire.FireComet.AvatarStateBypassComet");
 		time = System.currentTimeMillis();
@@ -195,12 +197,18 @@ public class FireComet extends FireAbility implements AddonAbility {
 	public void blast() {
 		List<BlockState> blocks = new ArrayList<>();
 
-		for (Location loc : GeneralMethods.getCircle(location, (int) blastRadius, 0, false, true, 0)) {
-			if (JCMethods.isUnbreakable(loc.getBlock())) continue;
-			if (RegionProtection.isRegionProtected(this, loc)) continue;
+		if (damageBlocks) {
+			List<Location> locations = GeneralMethods.getCircle(location, (int) blastRadius, 0, false, true, 0);
+			locations.sort((a, b) -> Integer.compare(b.getBlockY(), a.getBlockY()));
 
-			blocks.add(loc.getBlock().getState());
-			new RegenTempBlock(loc.getBlock(), Material.AIR, Material.AIR.createBlockData(), getRegenDelay(), false);
+			for (Location loc : locations) {
+				if (JCMethods.isUnbreakable(loc.getBlock())) continue;
+				if (RegionProtection.isRegionProtected(this, loc)) continue;
+				if (loc.getBlock().isEmpty()) continue;
+
+				blocks.add(loc.getBlock().getState());
+				new RegenTempBlock(loc.getBlock(), Material.AIR, Material.AIR.createBlockData(), getRegenDelay(), false);
+			}
 		}
 
 		for (Entity e : GeneralMethods.getEntitiesAroundPoint(location, blastRadius)) {
@@ -216,6 +224,8 @@ public class FireComet extends FireAbility implements AddonAbility {
 				DamageHandler.damageEntity(e, getDamage(), this);
 			}
 		}
+
+		LightManager.createLight(location).emit();
 
 		playFirebendingParticles(location, 20, Math.random(), Math.random(), Math.random());
 
@@ -267,6 +277,8 @@ public class FireComet extends FireAbility implements AddonAbility {
 		playFirebendingParticles(location.clone().add(v1), 1, 0, 0, 0);
 		location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location.clone().add(v), 1, 0, 0, 0, 0.02);
 		location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location.clone().add(v1), 1, 0, 0, 0, 0.02);
+
+		LightManager.createLight(location).emit();
 
 		if (this.angle == 360) {
 			this.angle = 0;

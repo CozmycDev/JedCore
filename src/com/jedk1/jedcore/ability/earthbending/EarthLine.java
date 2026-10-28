@@ -2,11 +2,7 @@ package com.jedk1.jedcore.ability.earthbending;
 
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.jedk1.jedcore.policies.removal.CannotBendRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.CompositeRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.IsDeadRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.IsOfflineRemovalPolicy;
-import com.jedk1.jedcore.policies.removal.SwappedSlotsRemovalPolicy;
+import com.jedk1.jedcore.policies.removal.*;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;

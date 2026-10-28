@@ -12,7 +12,6 @@ import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
-
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import org.bukkit.Location;
 import org.bukkit.Material;

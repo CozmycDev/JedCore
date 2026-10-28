@@ -1,37 +1,34 @@
 package com.jedk1.jedcore;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.jedk1.jedcore.ability.waterbending.passive.IcePassive;
-import com.jedk1.jedcore.util.*;
+import com.jedk1.jedcore.configuration.JedCoreConfig;
+import com.jedk1.jedcore.util.FireTick;
+import com.jedk1.jedcore.util.RegenTempBlock;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.region.RegionProtection;
-import com.projectkorra.projectkorra.util.LightManager;
+import com.projectkorra.projectkorra.util.TempBlock;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
-
-import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.util.TempBlock;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class JCMethods {
 

@@ -8,30 +8,18 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class JedCoreConfig {
 
 	static JedCore plugin;
-    public static Config board;
 	
 	public JedCoreConfig(JedCore plugin) {
 		JedCoreConfig.plugin = plugin;
-		board = new Config(new File("board.yml"));
-		loadConfigBoard();
 		loadConfigCore();
 		addDeathMessages();
 		setupElementSphereNames();
-	}
-
-	private void loadConfigBoard() {
-		FileConfiguration config;
-		config = board.getConfig();
-		config.addDefault("Settings.Enabled", false);
-		config.options().copyDefaults(true);
-		board.saveConfig();
 	}
 	
 	private void loadConfigCore() {
@@ -52,14 +40,11 @@ public class JedCoreConfig {
 		config.addDefault("Properties.ChiRestrictor.Whitelist", new ArrayList<String>());
 		
 		config.addDefault("Abilities.Avatar.ElementSphere.Enabled", true);
-		config.addDefault("Abilities.Avatar.ElementSphere.Description", "ElementSphere is a very all round ability, being "
-				+ "able to shoot attacks of each element, each with a "
-				+ "different effect. To use, simply Left-Click. Once active, "
-				+ "Sneak (Default: Shift) to fly around. Sneak and double "
-				+ "Left-Click to disable the ability! "
-				+ "To use each element, simply select hotbar slots 1-4 and Left-Click. "
-				+ "Each element has limited uses! Once an element is used up, "
-				+ "the element's ring will disappear!");
+		config.addDefault("Abilities.Avatar.ElementSphere.Description", "Create a floating sphere that lets you fly and attack with every element. "
+				+ "Left-Click to start it. While active, hold Sneak (Default: Shift) to fly, and use hotbar slots 1-5 "
+				+ "to choose Air, Earth, Fire, Water, or Stream. Left-Click to attack. "
+				+ "Each element has limited uses, and Stream uses 10 of each. "
+				+ "Sneak and double Left-Click to stop.");
 		config.addDefault("Abilities.Avatar.ElementSphere.Cooldown", 180000);
 		config.addDefault("Abilities.Avatar.ElementSphere.Duration", 60000);
 		config.addDefault("Abilities.Avatar.ElementSphere.MaxControlledHeight", 40);
@@ -97,10 +82,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Avatar.ElementSphere.Stream.ImpactRevert", 30000);
 		
 		config.addDefault("Abilities.Avatar.SpiritBeam.Enabled", true);
-		config.addDefault("Abilities.Avatar.SpiritBeam.Description", "An energybending ability usable by the Avatar. "
-				+ "To use, one must enter the AvatarState and hold down Sneak (Default: Shift). "
-			+ "This ability lasts only for a few seconds before requiring "
-			+ "another activation.");
+		config.addDefault("Abilities.Avatar.SpiritBeam.Description", "Fire a powerful spirit beam from your body. "
+				+ "You must be in the AvatarState. Hold Sneak (Default: Shift) to use it. ");
 		config.addDefault("Abilities.Avatar.SpiritBeam.Cooldown", 15000);
 		config.addDefault("Abilities.Avatar.SpiritBeam.Duration", 1000);
 		config.addDefault("Abilities.Avatar.SpiritBeam.Range", 40);
@@ -110,9 +93,10 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Avatar.SpiritBeam.BlockDamage.Radius", 3);
 		config.addDefault("Abilities.Avatar.SpiritBeam.BlockDamage.Regen", 20000);
 
+
 		config.addDefault("Abilities.Air.AirBlade.Enabled", true);
-		config.addDefault("Abilities.Air.AirBlade.Description", "With this ability bound, Left-Click to shoot "
-				+ "a strong blade of air at your targets to deal some damage!");
+		config.addDefault("Abilities.Air.AirBlade.Description", "Shoot a sharp blade of air that damages your target. "
+				+ "Left-Click to use it.");
 		config.addDefault("Abilities.Air.AirBlade.Cooldown", 3000);
 		config.addDefault("Abilities.Air.AirBlade.Range", 30.0);
 		config.addDefault("Abilities.Air.AirBlade.Damage", 4.0);
@@ -166,11 +150,9 @@ public class JedCoreConfig {
 				"CLOSED_EYEBLOSSOM"
 		));
 
-		config.addDefault("Abilities.Air.AirBreath.Enabled", false); // now included in PK Core as of 1.13 beta 2
-		config.addDefault("Abilities.Air.AirBreath.Description", "To use, hold Sneak (Default: Shift) to release "
-				+ "a strong breath of wind, knocking your opponents "
-				+ "back. This ability also has a longer range and "
-				+ "stronger knockback while in AvatarState!");
+		config.addDefault("Abilities.Air.AirBreath.Enabled", false); // ported to PK Core
+		config.addDefault("Abilities.Air.AirBreath.Description", "Breathe a strong gust of wind that pushes enemies back and puts out fire. "
+				+ "Hold Sneak (Default: Shift) to use it.");
 		config.addDefault("Abilities.Air.AirBreath.Cooldown", 3000);
 		config.addDefault("Abilities.Air.AirBreath.Duration", 3000);
 		config.addDefault("Abilities.Air.AirBreath.Particles", 3);
@@ -189,8 +171,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Air.AirBreath.Avatar.Knockback", 3.5);
 		
 		config.addDefault("Abilities.Air.AirGlide.Enabled", true);
-		config.addDefault("Abilities.Air.AirGlide.Description", "While falling, tap Sneak for a "
-				+ "slow and steady descent. Tap Sneak again to stop gliding.");
+		config.addDefault("Abilities.Air.AirGlide.Description", "Glide slowly and safely through the air. "
+				+ "While falling, tap Sneak (Default: Shift). Tap Sneak again to stop gliding.");
 		config.addDefault("Abilities.Air.AirGlide.Speed", 0.5);
 		config.addDefault("Abilities.Air.AirGlide.FallSpeed", 0.1);
 		config.addDefault("Abilities.Air.AirGlide.Particles", 4);
@@ -200,8 +182,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Air.AirGlide.RequireGround", false);
 		
 		config.addDefault("Abilities.Air.AirPunch.Enabled", true);
-		config.addDefault("Abilities.Air.AirPunch.Description", "Left-Click in rapid succession to punch high desnity packets of air "
-				+ "at enemies to do slight damage. A few punches can be thrown before the ability goes on cooldown.");
+		config.addDefault("Abilities.Air.AirPunch.Description", "Throw quick punches of compressed air that deal light damage. "
+				+ "Left-Click rapidly to throw several punches before the cooldown starts.");
 		config.addDefault("Abilities.Air.AirPunch.Cooldown", 5000);
 		config.addDefault("Abilities.Air.AirPunch.Threshold", 500);
 		config.addDefault("Abilities.Air.AirPunch.Shots", 4);
@@ -221,8 +203,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Air.AirPunch.Collisions.AirBlade.RemoveSecond", false);
 		
 		config.addDefault("Abilities.Air.Meditate.Enabled", true);
-		config.addDefault("Abilities.Air.Meditate.Description", "Hold Sneak (Default: Shift) to start meditating. "
-				+ "After you have focused your energy, you will obtain several buffs.");
+		config.addDefault("Abilities.Air.Meditate.Description", "Meditate to gain speed, higher jumps, and extra health. "
+				+ "Hold Sneak (Default: Shift) until you finish focusing, then release to gain the buffs. "
+				+ "Taking damage breaks your focus.");
 		config.addDefault("Abilities.Air.Meditate.UnfocusMessage", "You have become unfocused due to taking damage!");
 		config.addDefault("Abilities.Air.Meditate.LossFocusMessage", true);
 		config.addDefault("Abilities.Air.Meditate.ChargeTime", 5000);
@@ -234,12 +217,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Air.Meditate.JumpBoost", 3);
 		
 		config.addDefault("Abilities.Air.SonicBlast.Enabled", true);
-		config.addDefault("Abilities.Air.SonicBlast.Description", "SonicBlast is a soundbending ability, known by very few airbenders. "
-			+ "It allows the airbender to stun and deafen an opponent by creating a sonic blast. "
-			+ "This is achieved by creating two regions of high and low pressure and bringing them together. "
-			+ "To use, hold Sneak (Default: Shift) in the direction of the target. Once particles appear "
-			+ "around you, let go of Sneak to shoot a SonicBlast at your target! The technique is very powerful, "
-			+ "even if it doesn't seem it, and comes with a short cooldown.");
+		config.addDefault("Abilities.Air.SonicBlast.Description", "Stun and disorient your target with a blast of sound. "
+				+ "Hold Sneak (Default: Shift) while aiming at them. When particles appear, release Sneak to fire.");
 		config.addDefault("Abilities.Air.SonicBlast.ChargeTime", 2000);
 		config.addDefault("Abilities.Air.SonicBlast.Damage", 4.0);
 		config.addDefault("Abilities.Air.SonicBlast.Effects.BlindnessDuration", 5000);
@@ -254,7 +233,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Air.SonicBlast.Sound.Pitch", 0.0);
 		
 		config.addDefault("Abilities.Air.AirCombo.AirSlam.Enabled", true);
-		config.addDefault("Abilities.Air.AirCombo.AirSlam.Description", "Kick your enemy up into the air then blast them away!");
+		config.addDefault("Abilities.Air.AirCombo.AirSlam.Description", "Launch your target into the air, then blast them away. "
+				+ "This is an Air combo.");
 		config.addDefault("Abilities.Air.AirCombo.AirSlam.Cooldown", 8000);
 		config.addDefault("Abilities.Air.AirCombo.AirSlam.Power", 5.0);
 		config.addDefault("Abilities.Air.AirCombo.AirSlam.Range", 8);
@@ -263,26 +243,25 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Air.AirCombo.AirSlam.Instructions", "AirSwipe (Hold sneak) > AirBlast (Release sneak) > AirBlast (Hold sneak)");
 		
 		config.addDefault("Abilities.Air.AirCombo.SwiftStream.Enabled", true);
-		config.addDefault("Abilities.Air.AirCombo.SwiftStream.Description", "Create a stream of air as you fly which causes nearby "
-				+ "entities to be thrown in your direction.");
+		config.addDefault("Abilities.Air.AirCombo.SwiftStream.Description", "Fly forward and drag nearby enemies along with you. "
+				+ "This is an Air combo.");
 		config.addDefault("Abilities.Air.AirCombo.SwiftStream.DragFactor", 1.5);
 		config.addDefault("Abilities.Air.AirCombo.SwiftStream.Duration", 2000);
 		config.addDefault("Abilities.Air.AirCombo.SwiftStream.Cooldown", 6000);
 		config.addDefault("Abilities.Air.AirCombo.SwiftStream.Combination", Arrays.asList("Flight:SHIFT_DOWN", "Flight:SHIFT_UP", "Flight:SHIFT_DOWN", "Flight:SHIFT_UP"));
 		config.addDefault("Abilities.Air.AirCombo.SwiftStream.Instructions", "Flight (Double tap sneak)");
-		
+
+
 		config.addDefault("Abilities.Earth.EarthArmor.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthArmor.Description", "If the block is metal, then you will get metal armor!");
+		config.addDefault("Abilities.Earth.EarthArmor.Description", "When you raise EarthArmor from a metal block, "
+				+ "it becomes metal armor.");
 		config.addDefault("Abilities.Earth.EarthArmor.Resistance.Strength", 2);
 		config.addDefault("Abilities.Earth.EarthArmor.Resistance.Duration", 4000);
 		config.addDefault("Abilities.Earth.EarthArmor.UseIronArmor", false);
 		
 		config.addDefault("Abilities.Earth.EarthKick.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthKick.Description", "This move enables an earthbender to create a "
-				+ "large earthen cover, ideal for defense. "
-				+ "To use, Sneak (Default: Shift) at an earth "
-				+ "source and it will raise and launch towards "
-				+ "your foe!");
+		config.addDefault("Abilities.Earth.EarthKick.Description", "Kick a spray of earth blocks at your foe. "
+				+ "Tap Sneak (Default: Shift) while looking at an earthbendable block.");
 		config.addDefault("Abilities.Earth.EarthKick.Cooldown", 2000);
 		config.addDefault("Abilities.Earth.EarthKick.EarthBlocks", 10);
 
@@ -327,13 +306,10 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.EarthKick.Collisions.AirWheel.RemoveFirst", false);
 		config.addDefault("Abilities.Earth.EarthKick.Collisions.AirWheel.RemoveSecond", true);
 
-
 		config.addDefault("Abilities.Earth.EarthLine.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthLine.Description", "To use, place your cursor over an earth-bendable block on the ground, "
-			+ "then Sneak (Default: Shift) to select the block. After selecting the block you may release Sneak. "
-			+ "If you then Left-Click at an object or player, a small piece of earth will come up "
-			+ "from the ground and move towards your target to deal damage and knock them back. "
-			+ "Additionally, hold Sneak to control the flow of the line!");
+		config.addDefault("Abilities.Earth.EarthLine.Description", "Send a line of earth at your target. "
+				+ "Look at an earthbendable block on the ground and tap Sneak (Default: Shift) to select it, "
+				+ "then Left-Click to fire. Hold Sneak to steer the line.");
 		config.addDefault("Abilities.Earth.EarthLine.Cooldown", 3000);
 		config.addDefault("Abilities.Earth.EarthLine.PrepareCooldown", 0);
 		config.addDefault("Abilities.Earth.EarthLine.Range", 30);
@@ -345,19 +321,16 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.EarthLine.Damage", 3.0);
 		config.addDefault("Abilities.Earth.EarthLine.RemovalPolicy.SwappedSlots.Enabled", false);
 		
-		config.addDefault("Abilities.Earth.EarthPillar.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthPillar.Description", "With this ability bound, tap Sneak (Default: Shift) on any Earthbendable "
-				+ "surface to create pillar of earth in the direction of the block face!");
+		config.addDefault("Abilities.Earth.EarthPillar.Enabled", false); // todo: needs a new implementation tbh
+		config.addDefault("Abilities.Earth.EarthPillar.Description", "Raise a pillar of earth from a surface. "
+				+ "Tap Sneak (Default: Shift) while looking at an earthbendable block.");
 		config.addDefault("Abilities.Earth.EarthPillar.Height", 6);
 		config.addDefault("Abilities.Earth.EarthPillar.Range", 10);
 		
 		config.addDefault("Abilities.Earth.EarthShard.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthShard.Description", "EarthShard is a variation of EarthBlast "
-				+ "which the earthbender may use to hit a target. This "
-				+ "ability deals a fair amount of damage and is easy to "
-				+ "rapid-fire. To use, simply shift at an earthbendable block, "
-				+ "and it will ascend to your eye height. Then, click towards your "
-				+ "target and the block will launch itself towards it.");
+		config.addDefault("Abilities.Earth.EarthShard.Description", "Raise a small earth shard and launch it at your target. "
+				+ "Tap Sneak (Default: Shift) at an earthbendable block, then Left-Click at your target. "
+				+ "You can have several shards ready at once.");
 		config.addDefault("Abilities.Earth.EarthShard.Cooldown", 1000);
 		config.addDefault("Abilities.Earth.EarthShard.Damage.Normal", 1.0);
 		config.addDefault("Abilities.Earth.EarthShard.Damage.Metal", 1.5);
@@ -370,17 +343,13 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.EarthShard.KnockUp.Self.Allow", true);
 		config.addDefault("Abilities.Earth.EarthShard.KnockUp.Self.Velocity", 1.0);
 		config.addDefault("Abilities.Earth.EarthShard.KnockUp.Self.Range", 1.5);
-//		config.addDefault("Abilities.Earth.EarthShard.KnockUp.Allow", true);
-//		config.addDefault("Abilities.Earth.EarthShard.KnockUp.Velocity", 1.0);
 		config.addDefault("Abilities.Earth.EarthShard.AbilityCollisionRadius", 2.0);
 		config.addDefault("Abilities.Earth.EarthShard.EntityCollisionRadius", 1.4);
 		
 		config.addDefault("Abilities.Earth.EarthSurf.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthSurf.Description", "This ability allows an earth bender to "
-				+ "ride up on a wave of earth, allowing them to travel a little faster than "
-				+ "normal. To use, simply be in the air just above "
-				+ "the ground, and Left Click! Additionally, if an entity just so happens to get caught in "
-				+ "the wave, they will be moved with the wave.");
+		config.addDefault("Abilities.Earth.EarthSurf.Description", "Ride a wave of earth across the ground. "
+				+ "Left-Click while on or just above earthbendable ground. Sneak (Default: Shift) to stop. "
+				+ "Nearby entities can be carried along.");
 		config.addDefault("Abilities.Earth.EarthSurf.Cooldown.Cooldown", 3000);
 		config.addDefault("Abilities.Earth.EarthSurf.Cooldown.MinimumCooldown", 2000);
 		config.addDefault("Abilities.Earth.EarthSurf.Cooldown.Scaled", true);
@@ -394,13 +363,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.EarthSurf.SpringStiffness", 0.35);
 		
 		config.addDefault("Abilities.Earth.Fissure.Enabled", true);
-		config.addDefault("Abilities.Earth.Fissure.Description", "Fissure is an advanced Lavabending "
-				+ "ability enabling a lavabender to tear up the ground, "
-			+ "swallowing up any enemies. To use, simply swing at an enemy "
-			+ "and a line of lava will crack open. "
-			+ "Then, tap Sneak (Default: Shift) to expand the crevice. "
-			+ "The crevice has a maximum width and depth. Once the crevice has reached it's maximum "
-			+ "width, Sneak while looking at the crevice to close it!");
+		config.addDefault("Abilities.Earth.Fissure.Description", "Open a wide crack of lava in the ground. "
+				+ "Left-Click to start it. Tap Sneak (Default: Shift) to make it wider. "
+				+ "When it is fully open, look at it and tap Sneak to close it.");
 		config.addDefault("Abilities.Earth.Fissure.Cooldown", 20000);
 		config.addDefault("Abilities.Earth.Fissure.Duration", 15000);
 		config.addDefault("Abilities.Earth.Fissure.MaxWidth", 3);
@@ -408,11 +373,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.Fissure.SlapDelay", 50);
 		
 		config.addDefault("Abilities.Earth.LavaDisc.Enabled", true);
-		config.addDefault("Abilities.Earth.LavaDisc.Description", "Hold Sneak (Default: Shift) on a lava source "
-				+ "block to generate a disc of lava at your finger tips. Releasing "
-				+ "Sneak will shoot the disc off in the direction "
-				+ "you are looking! If you tap or hold Sneak again, "
-				+ "the disc will attempt to return to you!");
+		config.addDefault("Abilities.Earth.LavaDisc.Description", "Create a disc of lava at your fingertips. "
+				+ "Hold Sneak (Default: Shift) while looking at a lava or earth source block. "
+				+ "Release Sneak to shoot the disc. Hold Sneak again to call it back.");
 		String[] meltable = {
 				Material.COBBLESTONE.name(), Material.OAK_LOG.name(), Material.SPRUCE_LOG.name(),
 				Material.JUNGLE_LOG.name(), Material.DARK_OAK_LOG.name(), Material.BIRCH_LOG.name(),
@@ -435,9 +398,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.LavaDisc.RemovalPolicy.SwappedSlots.Enabled", true);
 		
 		config.addDefault("Abilities.Earth.LavaFlux.Enabled", true);
-		config.addDefault("Abilities.Earth.LavaFlux.Description", "This offensive ability enables a Lavabender to create a wave of lava, "
-				+ "swiftly progressing forward and hurting/burning anything in its way. To use, "
-				+ "simply swing your arm towards a target and the ability will activate.");
+		config.addDefault("Abilities.Earth.LavaFlux.Description", "Send a wave of lava forward that burns, hurts, and knocks back everything in its path. "
+				+ "Left-Click to use it.");
 		config.addDefault("Abilities.Earth.LavaFlux.Range", 12);
 		config.addDefault("Abilities.Earth.LavaFlux.Cooldown", 8000);
 		config.addDefault("Abilities.Earth.LavaFlux.Duration", 4000);
@@ -449,10 +411,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.LavaFlux.KnockBack", 1.0);
 		
 		config.addDefault("Abilities.Earth.LavaThrow.Enabled", true);
-		config.addDefault("Abilities.Earth.LavaThrow.Description", "Throwing lava is a fundamental technique for the rare subskill. "
-				+ "Use Sneak(Deafult: Shift) while looking at a pool of lava infront of you, then "
-				+ "Left-Click to splash the lava at your target. "
-				+ "It can be used in rapid succession to create multiple streams of lava!");
+		config.addDefault("Abilities.Earth.LavaThrow.Description", "Throw splashes of lava at your target. "
+				+ "Look at a lava pool and tap Sneak (Default: Shift) to take lava, then Left-Click to throw it. "
+				+ "You can throw several in a row.");
 		config.addDefault("Abilities.Earth.LavaThrow.Cooldown", 7000);
 		config.addDefault("Abilities.Earth.LavaThrow.MaxShots", 6);
 		config.addDefault("Abilities.Earth.LavaThrow.Range", 20);
@@ -463,8 +424,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.LavaThrow.CurveFactor", 0.5);
 
 		config.addDefault("Abilities.Earth.MagnetShield.Enabled", true);
-		config.addDefault("Abilities.Earth.MagnetShield.Description", "Repel any metal projectiles using a strong magnetic shield. "
-				+ "To activate, simply hold sneak with this ability bound.");
+		config.addDefault("Abilities.Earth.MagnetShield.Description", "Create a magnetic shield that pushes away arrows and nearby metal, "
+				+ "including enemies wearing metal gear. Hold Sneak (Default: Shift) or Left-Click to activate it.");
 		config.addDefault("Abilities.Earth.MagnetShield.Materials", Arrays.asList(
 				"IRON_INGOT",
 				"IRON_HELMET",
@@ -521,12 +482,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.MagnetShield.Velocity", 0.1);
 		
 		config.addDefault("Abilities.Earth.MetalFragments.Enabled", true);
-		config.addDefault("Abilities.Earth.MetalFragments.Description", "MetalFragments allows you to select a source and shoot "
-				+ "multiple fragments of metal out of that source "
-				+ "block towards your target, injuring them on impact. "
-				+ "To use, tap Sneak (Default: Shift) at a metal "
-				+ "source block and it will float up. Then, turn around "
-				+ "and click at your target to fling metal fragments at them.");
+		config.addDefault("Abilities.Earth.MetalFragments.Description", "Pull metal from up to 3 metal blocks and shoot it at your target. "
+				+ "Tap Sneak (Default: Shift) at a metal block to lift it. Tap Sneak at more metal to add sources. "
+				+ "Left-Click to fire fragments.");
 		config.addDefault("Abilities.Earth.MetalFragments.Cooldown", 5000);
 		config.addDefault("Abilities.Earth.MetalFragments.MaxSources", 3);
 		config.addDefault("Abilities.Earth.MetalFragments.SourceRange", 5);
@@ -535,12 +493,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.MetalFragments.Velocity", 2.0);
 		
 		config.addDefault("Abilities.Earth.MetalHook.Enabled", true);
-		config.addDefault("Abilities.Earth.MetalHook.Description", "This ability lets a Metalbender bend metal into "
-				+ "grappling hooks, allowing them to easily manouver terrain. "
-				+ "To use this ability, the user must either have Iron in their inventory "
-				+ "or be wearing an Iron/Chainmail Chestplate. Left-Click in the direction "
-				+ "you are looking to fire a grappling hook, several hooks can be active at once, "
-				+ "allowing the bender to 'hang' in locations. To disengage the hooks, hold Shift (Default: Sneak) or Sprint.");
+		config.addDefault("Abilities.Earth.MetalHook.Description", "Shoot metal grappling hooks to swing across terrain. "
+				+ "You need iron ingots or blocks in your inventory, or an iron or chainmail chestplate. "
+				+ "Left-Click to fire a hook. Hold Sneak (Default: Shift) or Sprint to let go.");
 		config.addDefault("Abilities.Earth.MetalHook.Cooldown", 3000);
 		config.addDefault("Abilities.Earth.MetalHook.Range", 30);
 		config.addDefault("Abilities.Earth.MetalHook.MaxHooks", 3);
@@ -549,27 +504,16 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.MetalHook.BarrierHooking", true);
 		
 		config.addDefault("Abilities.Earth.MetalShred.Enabled", true);
-		config.addDefault("Abilities.Earth.MetalShred.Description", "MetalShred allows you to tear a metal surface allowing you to sneak in to the other side."
-				+ "To use, you must find a flat metal surface. Then, Sneak(Default: Shift) "
-				+ "at a piece of metal on that surface, and two pieces of metal "
-				+ "will be pulled toward you. Finally, run alongside the surface to coil "
-				+ "the metal around those two pieces. The way will be open, and the blocks "
-				+ "will not reset until you either select a new source or you switch "
-				+ "abilities. If you click after having torn a hole in a vertical surface, "
-				+ "you can Left-Click in any direction and the metal will unfold in that "
-				+ "direction. If you are fast and precise enough, the metal can bend in "
-				+ "any shape. The length of this sheet of metal depends on how much was "
-				+ "coiled in the first place.");
+		config.addDefault("Abilities.Earth.MetalShred.Description", "Tear open a metal wall so you can pass through. "
+				+ "Look at a metal surface and tap Sneak (Default: Shift). Sprint along the wall to pull the metal with you. "
+				+ "Left-Click to unfold it in the direction you look.");
 		config.addDefault("Abilities.Earth.MetalShred.SourceRange", 5);
         config.addDefault("Abilities.Earth.MetalShred.ExtendTick", 80);
         config.addDefault("Abilities.Earth.MetalShred.Damage", 6.0);
         
         config.addDefault("Abilities.Earth.MudSurge.Enabled", true);
-		config.addDefault("Abilities.Earth.MudSurge.Description", "This ability lets an earthbender send a surge of mud "
-				+ "in any direction, knocking back enemies and "
-				+ "dealing moderate damage. This ability has a chance "
-				+ "of blinding the target. To use, select "
-				+ "a source of earth and click in any direction.");
+		config.addDefault("Abilities.Earth.MudSurge.Description", "Send a wave of mud that knocks back enemies, damages them, and may blind them. "
+				+ "Look at an earth source and tap Sneak (Default: Shift), then Left-Click in a direction.");
 		config.addDefault("Abilities.Earth.MudSurge.Cooldown", 6000);
 		config.addDefault("Abilities.Earth.MudSurge.Damage", 1.0);
 		config.addDefault("Abilities.Earth.MudSurge.Waves", 5);
@@ -586,10 +530,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.MudSurge.RemovalPolicy.OutOfRange.Range", 25.0);
 		
 		config.addDefault("Abilities.Earth.SandBlast.Enabled", true);
-		config.addDefault("Abilities.Earth.SandBlast.Description", "This ability lets an earthbender blast a bunch of sand at an enemy "
-				+ "damaging them and temporarily blinding them! Just Sneak (Default: Shift) "
-				+ "on a sand bendable block, then Left-Click in a direction to shoot a "
-				+ "blast of sand!");
+		config.addDefault("Abilities.Earth.SandBlast.Description", "Blast sand at your target to damage and briefly blind them. "
+				+ "Tap Sneak (Default: Shift) at a sand block, then Left-Click in a direction.");
 		config.addDefault("Abilities.Earth.SandBlast.Cooldown", 3000);
 		config.addDefault("Abilities.Earth.SandBlast.Damage", 3.0);
 		config.addDefault("Abilities.Earth.SandBlast.SourceRange", 8);
@@ -597,8 +539,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.SandBlast.MaxSandBlocks", 10);
 		
 		config.addDefault("Abilities.Earth.EarthCombo.Crevice.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthCombo.Crevice.Description", "Create a Crevice in the ground! Once opened, "
-				+ "anyone can Tap Sneak with Shockwave to close the Crevice!");
+		config.addDefault("Abilities.Earth.EarthCombo.Crevice.Description", "Open a deep crevice in the ground. "
+				+ "This is an Earth combo. You can close it by tapping Sneak (Default: Shift) with Shockwave while looking at it.");
 		config.addDefault("Abilities.Earth.EarthCombo.Crevice.Range", 50);
 		config.addDefault("Abilities.Earth.EarthCombo.Crevice.RevertDelay", 7500);
 		config.addDefault("Abilities.Earth.EarthCombo.Crevice.Depth", 5);
@@ -611,7 +553,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.EarthCombo.Crevice.Instructions", "Collapse (Right-click a block) > Shockwave (Tap sneak) > Shockwave (Tap sneak)");
 
 		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.Enabled", true);
-		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.Description", "Fire balls of magma at your enemy!");
+		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.Description", "Fire balls of magma at your enemies. "
+				+ "This is an Earth combo. Left-Click to fire each ball.");
 		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.MaxShots", 3);
 		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.ImpactDamage", 2.0);
 		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.SearchRange", 4);
@@ -628,6 +571,7 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.Combination", Arrays.asList("EarthBlast:SHIFT_DOWN", "LavaFlow:SHIFT_UP", "LavaFlow:SHIFT_DOWN", "LavaFlow:RIGHT_CLICK_BLOCK"));
 		config.addDefault("Abilities.Earth.EarthCombo.MagmaBlast.Instructions", "EarthBlast (Hold sneak) > LavaFlow (Release sneak) > LavaFlow (Hold sneak) > LavaFlow (Right-click a block) > LavaFlow (Left-click multiple times)");
 
+
 		ArrayList<String> combustionSkipMaterials = new ArrayList<>();
 		combustionSkipMaterials.add("#bee_growables");
 		combustionSkipMaterials.add("#cave_vines");
@@ -637,10 +581,9 @@ public class JedCoreConfig {
 		combustionSkipMaterials.add("pale_hanging_moss");
 
 		config.addDefault("Abilities.Fire.Combustion.Enabled", true);
-		config.addDefault("Abilities.Fire.Combustion.Description", "Hold Shift to focus large amounts of energy into your body, "
-				+ "Release Shift to fire Combustion. Move your mouse to "
-				+ "direct where the beam travels. Left-Click to detonate "
-				+ "the beam manually");
+		config.addDefault("Abilities.Fire.Combustion.Description", "Charge and fire an explosive beam. "
+				+ "Hold Sneak (Default: Shift) to charge, then release to fire. "
+				+ "While the beam is flying, Left-Click to make it explode early.");
 		config.addDefault("Abilities.Fire.Combustion.Damage", 4.0);
 		config.addDefault("Abilities.Fire.Combustion.FireTick", 100);
 		config.addDefault("Abilities.Fire.Combustion.MisfireModifier", -1);
@@ -661,8 +604,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.Combustion.SkipMaterials", combustionSkipMaterials);
 
 		config.addDefault("Abilities.Fire.Discharge.Enabled", true);
-		config.addDefault("Abilities.Fire.Discharge.Description", "Left-Click to shoot bolts of electricity out "
-				+ "of your fingertips zapping what ever it hits!");
+		config.addDefault("Abilities.Fire.Discharge.Description", "Shoot bolts of electricity from your fingertips at whatever you hit. "
+				+ "Left-Click to use it.");
 		config.addDefault("Abilities.Fire.Discharge.Damage", 3.0);
 		config.addDefault("Abilities.Fire.Discharge.Cooldown", 5000);
 		config.addDefault("Abilities.Fire.Discharge.AvatarCooldown", 500);
@@ -676,7 +619,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.Discharge.Stun.Duration", 1000);
 		
 		config.addDefault("Abilities.Fire.FireBall.Enabled", true);
-		config.addDefault("Abilities.Fire.FireBall.Description", "To use, simply Left-Click to shoot a fireball at your target!");
+		config.addDefault("Abilities.Fire.FireBall.Description", "Shoot a fireball at your target. "
+				+ "Left-Click to use it.");
 		config.addDefault("Abilities.Fire.FireBall.Cooldown", 3000);
 		config.addDefault("Abilities.Fire.FireBall.Range", 50);
 		config.addDefault("Abilities.Fire.FireBall.Damage", 3.0);
@@ -693,12 +637,10 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.FireBall.Collisions.AirShield.Reflect", true);
 		
 		config.addDefault("Abilities.Fire.FireBreath.Enabled", true);
-		config.addDefault("Abilities.Fire.FireBreath.Description", "To use, hold Sneak (Default: Shift) to start breathing "
-				+ "fire! Some Firebenders possess the power to infuse color "
-				+ "when they breathe, it's unclear how they do this, but some suggest "
-				+ "it can be obtained by saying \"Bring fire and light together as one and allow the breath of color\" "
-				+ "and can be brought back to normal by saying \"Split the bond of fire "
-				+ "and light and set the color free\".");
+		config.addDefault("Abilities.Fire.FireBreath.Description", "Breathe a stream of fire. "
+				+ "Hold Sneak (Default: Shift) to use it. ");
+				// rainbow fire chat message easter egg: Bring fire and light together as one and allow the breath of color
+				// stop rainbow fire: Split the bond of fire and light and set the color free
 		config.addDefault("Abilities.Fire.FireBreath.Cooldown", 5000);
 		config.addDefault("Abilities.Fire.FireBreath.Duration", 3000);
 		config.addDefault("Abilities.Fire.FireBreath.Particles", 3);
@@ -716,10 +658,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.FireBreath.RainbowBreath.NoAccess", "You don't possess the power to bond light with fire.");
 		
 		config.addDefault("Abilities.Fire.FireComet.Enabled", true);
-		config.addDefault("Abilities.Fire.FireComet.Description", "Harnessing the power of Sozin's Comet, a firebender can create a great "
-				+ "ball of fire, with much destructive power. Only useable during Sozin's Comet or while in the AvatarState, hold Sneak (Default: Shift) "
-				+ "to start charging the ability up. Once the ability is charged, a large mass of particles will follow your cursor, until you release sneak, "
-				+ "launching the great ball of fire in the direction you are looking.");
+		config.addDefault("Abilities.Fire.FireComet.Description", "Create a huge ball of fire. "
+				+ "Only usable during Sozin's Comet or in the AvatarState. "
+				+ "Hold Sneak (Default: Shift) to charge, then release to launch it where you look.");
 		config.addDefault("Abilities.Fire.FireComet.Cooldown", 45000);
 		config.addDefault("Abilities.Fire.FireComet.ChargeUp", 7000);
 		config.addDefault("Abilities.Fire.FireComet.Damage", 6.0);
@@ -730,22 +671,22 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.FireComet.SozinsComet.BlastRadius", 5.0);
 		config.addDefault("Abilities.Fire.FireComet.Range", 50);
 		config.addDefault("Abilities.Fire.FireComet.RegenDelay", 15000);
+		config.addDefault("Abilities.Fire.FireComet.DamageBlocks", true);
 		config.addDefault("Abilities.Fire.FireComet.SozinsCometOnly", true);
 		config.addDefault("Abilities.Fire.FireComet.AvatarStateBypassComet", true);
 		
 		config.addDefault("Abilities.Fire.FirePunch.Enabled", true);
-		config.addDefault("Abilities.Fire.FirePunch.Description", "This basic ability allows a Firebender to channel their energies into a "
-				+ "single punch, igniting and damaging the victim.");
+		config.addDefault("Abilities.Fire.FirePunch.Description", "Charge your fist with fire and punch an enemy to ignite and damage them. "
+				+ "Left-Click to ready it, then hit an enemy. Tap Sneak (Default: Shift) to switch hands.");
 		config.addDefault("Abilities.Fire.FirePunch.Cooldown", 4000);
 		config.addDefault("Abilities.Fire.FirePunch.FireTicks", 2000);
 		config.addDefault("Abilities.Fire.FirePunch.Damage", 2.0);
 		config.addDefault("Abilities.Fire.FirePunch.BurnsDroppedItems", true);
 
 		config.addDefault("Abilities.Fire.FireShots.Enabled", true);
-		config.addDefault("Abilities.Fire.FireShots.Description", "To use, tap Sneak (Default: Shift) to summon a "
-				+ "FireBalls at your hand, then Left Click to shoot off each ball! "
-				+ "Each shot will follow the cursor until it runs out or hits something! "
-				+ "Tap Sneak again to switch your main hand.");
+		config.addDefault("Abilities.Fire.FireShots.Description", "Summon several small fireballs and shoot them one by one. "
+				+ "Tap Sneak (Default: Shift) to summon them, then Left-Click to shoot. "
+				+ "Tap Sneak again to switch hands.");
 		config.addDefault("Abilities.Fire.FireShots.Cooldown", 3000);
 		config.addDefault("Abilities.Fire.FireShots.Range", 50);
 		config.addDefault("Abilities.Fire.FireShots.FireBalls", 4);
@@ -770,9 +711,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.FireSki.PunchActivated", false);
 		
 		config.addDefault("Abilities.Fire.LightningBurst.Enabled", true);
-		config.addDefault("Abilities.Fire.LightningBurst.Description", "To use the most explosive lightning move available to a firebender, hold "
-				+ "Sneak (Default: Shift) until blue sparks appear in front of you. Upon releasing, "
-				+ "you will unleash an electrical sphere, shocking anyone who gets too close");
+		config.addDefault("Abilities.Fire.LightningBurst.Description", "Charge a sphere of lightning and release it to shock everyone nearby. "
+				+ "Hold Sneak (Default: Shift) until blue sparks appear, then release.");
 		config.addDefault("Abilities.Fire.LightningBurst.Cooldown", 25000);
 		config.addDefault("Abilities.Fire.LightningBurst.ChargeUp", 4000);
 		config.addDefault("Abilities.Fire.LightningBurst.AvatarCooldown", 1000);
@@ -783,15 +723,12 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.LightningBurst.Sound.Interval", 6);
 		config.addDefault("Abilities.Fire.LightningBurst.Stun.Chance", 0.1);
 		config.addDefault("Abilities.Fire.LightningBurst.Stun.Duration", 1000);
-		
+
+
 		config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
-		config.addDefault("Abilities.Water.Bloodbending.Description", "This ability allows a skilled waterbender "
-				+ "to bend the water within an enemy's blood, granting them full "
-				+ "control over the enemy's limbs. This ability is extremely dangerous "
-				+ "and is to be used carefully. To use, sneak while looking at an entity "
-				+ "and its body will follow your movement. If you click, you will launch "
-				+ "the entity towards whatever you were looking at when you clicked. The "
-				+ "entity may collide with others, injuring them and the other one further.");
+		config.addDefault("Abilities.Water.Bloodbending.Description", "Control an enemy's body by bending the water in their blood. "
+				+ "Hold Sneak (Default: Shift) while looking at them. Left-Click to throw them where you are looking. "
+				+ "Stop Sneak to release them.");
 		config.addDefault("Abilities.Water.Bloodbending.NightOnly", false);
 		config.addDefault("Abilities.Water.Bloodbending.FullMoonOnly", false);
 		config.addDefault("Abilities.Water.Bloodbending.UndeadMobs", true);
@@ -803,15 +740,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.Bloodbending.Cooldown", 4000);
 
 		config.addDefault("Abilities.Water.BloodPuppet.Enabled", true);
-		config.addDefault("Abilities.Water.BloodPuppet.Description", "This very high-level bloodbending ability lets "
-				+ "a master control entities' limbs, forcing them to "
-				+ "attack the master's target. To use this ability, you must "
-				+ "be a bloodbender. Next, sneak while targeting "
-				+ "a mob or player and you will start controlling them. To "
-				+ "make the entity hit another, click. To release your "
-				+ "target, stop sneaking. This ability has NO cooldown, but "
-				+ "may only be usable during the night depending on the "
-				+ "server configuration.");
+		config.addDefault("Abilities.Water.BloodPuppet.Description", "Control an enemy's body and force them to attack for you. "
+				+ "You must be a bloodbender. Hold Sneak (Default: Shift) while looking at them, then Left-Click to make them attack. "
+				+ "Stop Sneak to release them.");
 		config.addDefault("Abilities.Water.BloodPuppet.NightOnly", false);
 		config.addDefault("Abilities.Water.BloodPuppet.FullMoonOnly", false);
 		config.addDefault("Abilities.Water.BloodPuppet.UndeadMobs", true);
@@ -823,13 +754,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.BloodPuppet.Cooldown", 4000);
 		
 		config.addDefault("Abilities.Water.Drain.Enabled", true);
-		config.addDefault("Abilities.Water.Drain.Description", "Inspired by how Hama drained water from the fire lilies, many benders "
-				+ "have practiced in the skill of draining water from plants! With this ability bound, "
-				+ "Sneak (Default: Shift) near/around plant sources to drain the water out of them to fill up any "
-				+ "bottles/buckets in your inventory! Alternatively, if you have nothing to fill"
-				+ " and blasts are enabled in the config, you will be able to create mini blasts "
-				+ "of water to shoot at your targets! Aleternatively, this ability can also be used to quickly fill up "
-				+ "bottles from straight water sources or from falling rain!");
+		config.addDefault("Abilities.Water.Drain.Description", "Drain water from plants into bottles or buckets, or shoot small water blasts. "
+				+ "Hold Sneak (Default: Shift) near plants to drain them. If you have nothing to fill, hold Sneak and Left-Click to shoot a water blast. "
+				+ "You can also fill bottles from water or rain.");
 		config.addDefault("Abilities.Water.Drain.RegenDelay", 15000);
 		config.addDefault("Abilities.Water.Drain.Duration", 2000);
 		config.addDefault("Abilities.Water.Drain.Cooldown", 2000);
@@ -847,10 +774,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.Drain.MaxBlasts", 4);
 		config.addDefault("Abilities.Water.Drain.DrainTempBlocks", true);
 		
-		config.addDefault("Abilities.Water.FrostBreath.Enabled", false);
-		config.addDefault("Abilities.Water.FrostBreath.Description", "As demonstrated by Katara, a Waterbender is able to freeze their breath, "
-				+ "causing anything it touches to be frozen! With this ability bound, simply hold "
-				+ "Sneak (Default: Shift) to start breathing frost!");
+		config.addDefault("Abilities.Water.FrostBreath.Enabled", false); // ported to PK Core
+		config.addDefault("Abilities.Water.FrostBreath.Description", "Breathe freezing air that freezes what it touches. "
+				+ "Hold Sneak (Default: Shift) to use it.");
 		config.addDefault("Abilities.Water.FrostBreath.Cooldown", 15000);
 		config.addDefault("Abilities.Water.FrostBreath.Duration", 3000);
 		config.addDefault("Abilities.Water.FrostBreath.Particles", 3);
@@ -869,23 +795,18 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.FrostBreath.RestrictBiomes", true);
 		
 		config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
-		config.addDefault("Abilities.Water.HealingWaters.Description", "To use this ability, the bender has to be partially submerged "
-				+ "in water, OR be holding either a bottle of water or a water bucket."
-				+ " This move will heal the player automatically if they have it equipped "
-				+ "and are standing in water. If the player sneaks while in water and is targeting"
-				+ " another entity, the bender will heal the targeted entity. The alternate "
-				+ "healing method requires the bender to be holding a bottle of water or a water"
-				+ " bucket. To start healing simply sneak, however if the bender is targeting "
-				+ "a mob while sneaking, the bender will heal the targeted mob.");
+		config.addDefault("Abilities.Water.HealingWaters.Description", "Heal yourself and others with water. "
+				+ "Stand in water to heal yourself. Hold Sneak (Default: Shift) while looking at a hurt ally in water to heal them. "
+				+ "If you hold a water bottle or bucket, Sneak to heal yourself or the person you target.");
 		config.addDefault("Abilities.Water.HealingWaters.Power", 1);
 		config.addDefault("Abilities.Water.HealingWaters.Range", 5);
 		config.addDefault("Abilities.Water.HealingWaters.DrainChance", 5);
 
 		config.addDefault("Abilities.Water.IceClaws.Enabled", true);
-		config.addDefault("Abilities.Water.IceClaws.Description", "As demonstrated by Hama, a Waterbender can pull water out of thin air to create claws "
-				+ "at the tips of their fingers. With IceClaws bound, hold Sneak (Default: Shift) to "
-				+ "start pulling water out the air until you form claws at your finger "
-				+ "tips, then attack an enemy to slow them down and do a bit of damage!");
+		config.addDefault("Abilities.Water.IceClaws.Description", "Create ice claws on your fingertips. "
+				+ "Hold Sneak (Default: Shift) until they form. "
+				+ "Punch an enemy to slow and damage them, or Left-Click to throw the claws. "
+		        + "Tap Sneak again to switch hands.");
 		config.addDefault("Abilities.Water.IceClaws.Cooldown", 6000);
 		config.addDefault("Abilities.Water.IceClaws.ChargeTime", 1000);
 		config.addDefault("Abilities.Water.IceClaws.Range", 10);
@@ -903,11 +824,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.IceClaws.AllowHandSwap", true);
 		
 		config.addDefault("Abilities.Water.IceWall.Enabled", true);
-		config.addDefault("Abilities.Water.IceWall.Description", "IceWall allows an icebender to create a wall of ice, similar to "
-				+ "raiseearth. To use, simply sneak while targeting either water, ice, or snow. "
-				+ "To break the wall, you must sneak again while targeting it. Be aware that "
-				+ "other icebenders can break your own shields, and if you are too close you "
-				+ "can get hurt by the shards.");
+		config.addDefault("Abilities.Water.IceWall.Description", "Raise a wall of ice from water, ice, or snow. "
+				+ "Sneak (Default: Shift) while looking at it. Sneak at the wall again to break it. "
+				+ "Nearby enemies can be hurt when it breaks.");
 		config.addDefault("Abilities.Water.IceWall.Cooldown", 4000);
 		config.addDefault("Abilities.Water.IceWall.Width", 6);
 		config.addDefault("Abilities.Water.IceWall.MaxHeight", 5);
@@ -934,16 +853,16 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.IceWall.WallDamage.AirBlast", 2);
 		
 		config.addDefault("Abilities.Water.WakeFishing.Enabled", true);
-		config.addDefault("Abilities.Water.WakeFishing.Description", "With this ability bound, hold Sneak (Default: Shift) at a water block and "
-				+ "don't lose focus of that block. Eventually some fish will investigate "
-				+ "the wake and swim out at you!");
+		config.addDefault("Abilities.Water.WakeFishing.Description", "Fish with waterbending. "
+				+ "Hold Sneak (Default: Shift) and keep looking at a water block. "
+				+ "After a moment, fish will jump out at you.");
 		config.addDefault("Abilities.Water.WakeFishing.Cooldown", 10000);
 		config.addDefault("Abilities.Water.WakeFishing.Duration", 20000);
 		config.addDefault("Abilities.Water.WakeFishing.Range", 5);
 		
 		config.addDefault("Abilities.Water.WaterCombo.Maelstrom.Enabled", true);
-		config.addDefault("Abilities.Water.WaterCombo.Maelstrom.Description", "Create a swirling mass of water that drags any entity that enters it to the bottom "
-				+ "of the whirlpool.");
+		config.addDefault("Abilities.Water.WaterCombo.Maelstrom.Description", "Create a swirling whirlpool that pulls anything inside it to the bottom. "
+				+ "This is a Water combo. You must use it on deep water.");
 		config.addDefault("Abilities.Water.WaterCombo.Maelstrom.Cooldown", 25000);
 		config.addDefault("Abilities.Water.WaterCombo.Maelstrom.Duration", 15000);
 		config.addDefault("Abilities.Water.WaterCombo.Maelstrom.MaxDepth", 5);
@@ -952,9 +871,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.WaterCombo.Maelstrom.Instructions", "PhaseChange (Hold sneak) > Torrent (Left-click) > Torrent (Left-click)");
 		
 		config.addDefault("Abilities.Water.WaterCombo.WaterFlow.Enabled", true);
-		config.addDefault("Abilities.Water.WaterCombo.WaterFlow.Description", "Some Waterbenders have managed to create torrents of water much stronger than a regular torrent, "
-				+ "that can carry them selves and others, as well as being able to freeze the entire stream whenever. The bender must stay focused on the flow or else the flow will stop."
-				+ " If you Sneak (Default: Shift) while controlling the stream, the stream will return to you.");
+		config.addDefault("Abilities.Water.WaterCombo.WaterFlow.Description", "Create a powerful stream of water that follows your aim and can carry you and others. "
+				+ "This is a Water combo. Hold Sneak (Default: Shift) to pull it back. "
+				+ "Left-Click with WaterManipulation to freeze it if you can icebend.");
 		config.addDefault("Abilities.Water.WaterCombo.WaterFlow.Cooldown", 8000);
 		config.addDefault("Abilities.Water.WaterCombo.WaterFlow.Duration", 8000);
 		config.addDefault("Abilities.Water.WaterCombo.WaterFlow.MeltDelay", 5000);
@@ -982,8 +901,9 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.WaterCombo.WaterFlow.Instructions", "WaterManipulation (Tap sneak) > Torrent (Tap sneak) > Torrent (Hold sneak) > WaterManipulation (Release sneak)");
 		
 		config.addDefault("Abilities.Water.WaterCombo.WaterGimbal.Enabled", true);
-		config.addDefault("Abilities.Water.WaterCombo.WaterGimbal.Description", "Skilled Waterbenders are able to create two spinning rings of water around their bodies, "
-				+ "which can be used as a defensive ability or for an offensive attack.");
+		config.addDefault("Abilities.Water.WaterCombo.WaterGimbal.Description", "Create two spinning rings of water around you. "
+				+ "This is a Water combo. Hold Sneak (Default: Shift) to keep them spinning, "
+				+ "and Left-Click with WaterManipulation to shoot a ring at your enemies.");
 		config.addDefault("Abilities.Water.WaterCombo.WaterGimbal.Cooldown", 7000);
 		config.addDefault("Abilities.Water.WaterCombo.WaterGimbal.Damage", 3.0);
 		config.addDefault("Abilities.Water.WaterCombo.WaterGimbal.RingSize", 3.5);
@@ -1007,17 +927,18 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Water.Ice.Passive.Skate.Enabled", true);
 		config.addDefault("Abilities.Water.Ice.Passive.Skate.SpeedFactor", 4);
 		config.addDefault("Abilities.Water.Ice.Passive.Skate.LeaveIceDuration", 60);
-		
+
+
 		config.addDefault("Abilities.Chi.Backstab.Enabled", true);
-		config.addDefault("Abilities.Chi.Backstab.Description", "Strike your foe in the back with a hard jab, temporariliy blocking their Chi, and "
-				+ "inflicting a lot of damage! This ability has a long cooldown. You must hit the target in the back or this ability won't work!");
+		config.addDefault("Abilities.Chi.Backstab.Description", "Strike an enemy from behind to block their chi and deal heavy damage. "
+				+ "Hit them in the back with a melee attack. It has a long cooldown and fails if you are not behind them.");
 		config.addDefault("Abilities.Chi.Backstab.Cooldown", 8500);
 		config.addDefault("Abilities.Chi.Backstab.Damage", 6.0);
 		config.addDefault("Abilities.Chi.Backstab.MaxActivationAngle", 90);
 		
 		config.addDefault("Abilities.Chi.DaggerThrow.Enabled", true);
-		config.addDefault("Abilities.Chi.DaggerThrow.Description", "With this ability bound, Left-Click in "
-				+ "rapid succession to shoot arrows out of your inventory at your target!");
+		config.addDefault("Abilities.Chi.DaggerThrow.Description", "Shoot arrows at your target. "
+				+ "Left-Click quickly to throw several.");
 		config.addDefault("Abilities.Chi.DaggerThrow.Cooldown", 3000);
 		config.addDefault("Abilities.Chi.DaggerThrow.MaxDaggers.Enabled", true);
 		config.addDefault("Abilities.Chi.DaggerThrow.MaxDaggers.Amount", 6);
