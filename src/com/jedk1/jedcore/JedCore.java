@@ -1,12 +1,14 @@
 package com.jedk1.jedcore;
 
 import com.google.common.reflect.ClassPath;
+import com.jedk1.jedcore.ability.earthbending.EarthBlastAbility;
 import com.jedk1.jedcore.command.Commands;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.listener.AbilityListener;
 import com.jedk1.jedcore.listener.CommandListener;
 import com.jedk1.jedcore.listener.JCListener;
 import com.jedk1.jedcore.util.*;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -94,6 +96,12 @@ public class JedCore extends JavaPlugin {
 				} catch (Exception e) {
 
 				}
+			}
+
+			CoreAbility earthBlast = CoreAbility.getAbility(EarthBlastAbility.class);
+			if (earthBlast != null && earthBlast.isEnabled()) {
+				ProjectKorra.getCollisionInitializer().addSmallAbility(earthBlast);
+				ProjectKorra.getCollisionInitializer().addRemoveSpoutAbility(earthBlast);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

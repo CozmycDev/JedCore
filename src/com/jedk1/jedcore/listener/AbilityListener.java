@@ -38,16 +38,23 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -62,6 +69,9 @@ public class AbilityListener implements Listener {
 	}
 
 	private final List<UUID> recentlyDropped = new ArrayList<>();
+	private final Set<UUID> recentlyBlockEdited = new HashSet<>();
+	private final Set<UUID> recentlyRightClickedBlock = new HashSet<>();
+	private final HashMap<UUID, Long> lastClickTime = new HashMap<>();
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	// Abilities that should bypass punch cancels should be handled here.
@@ -135,6 +145,20 @@ public class AbilityListener implements Listener {
 		}
 
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> recentlyDropped.remove(event.getPlayer().getUniqueId()), 2L);
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		recentlyBlockEdited.add(event.getPlayer().getUniqueId());
+
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> recentlyBlockEdited.remove(event.getPlayer().getUniqueId()), 2L);
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		recentlyBlockEdited.add(event.getPlayer().getUniqueId());
+
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> recentlyBlockEdited.remove(event.getPlayer().getUniqueId()), 2L);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -331,6 +355,40 @@ public class AbilityListener implements Listener {
 		}
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerAnimation(PlayerAnimationEvent event) {
+		if (event.getAnimationType() != PlayerAnimationType.ARM_SWING) {
+			return;
+		}
+
+		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return;
+		}
+
+		UUID playerId = player.getUniqueId();
+		if (recentlyDropped.contains(playerId) || recentlyBlockEdited.contains(playerId) || recentlyRightClickedBlock.contains(playerId)) {
+			return;
+		}
+
+		long currentTime = System.currentTimeMillis();
+		Long lastClick = lastClickTime.get(playerId);
+		if (lastClick != null && currentTime - lastClick < 100L) {
+			return;
+		}
+		lastClickTime.put(playerId, currentTime);
+
+		if (!"EarthBlast".equalsIgnoreCase(bPlayer.getBoundAbilityName())) {
+			return;
+		}
+
+		boolean isSneaking = player.isSneaking();
+		for (EarthBlastAbility hurl : CoreAbility.getAbilities(player, EarthBlastAbility.class)) {
+			hurl.handleLeftClick(isSneaking);
+		}
+	}
+
 	public static ConcurrentHashMap<UUID, Long> recent = new ConcurrentHashMap<UUID, Long>();
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -369,6 +427,25 @@ public class AbilityListener implements Listener {
 		if (bPlayer.isChiBlocked()) {
 			event.setCancelled(true);
 			return;
+		}
+
+		if (event.isSneaking() && abilClass.equals(EarthBlastAbility.class) && bPlayer.canBend(coreAbil)) {
+			Collection<EarthBlastAbility> hurls = CoreAbility.getAbilities(player, EarthBlastAbility.class);
+
+			if (!hurls.isEmpty()) {
+				int maxHurls = hurls.iterator().next().getMaxHurls();
+				if (hurls.size() >= maxHurls) {
+					return;
+				}
+
+				for (EarthBlastAbility hurl : hurls) {
+					if (hurl.isReadyOrSelected()) {
+						return;
+					}
+				}
+			}
+
+			new EarthBlastAbility(player);
 		}
 
 		if (player.isSneaking() && bPlayer.canBendIgnoreCooldowns(coreAbil)) {
@@ -533,6 +610,10 @@ public class AbilityListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteraction(PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			UUID playerId = event.getPlayer().getUniqueId();
+			recentlyRightClickedBlock.add(playerId);
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> recentlyRightClickedBlock.remove(playerId), 2L);
+
 			MetalFragments.shootFragment(event.getPlayer());
 		}
 	}

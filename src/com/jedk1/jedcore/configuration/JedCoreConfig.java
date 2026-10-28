@@ -258,7 +258,34 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.EarthArmor.Resistance.Strength", 2);
 		config.addDefault("Abilities.Earth.EarthArmor.Resistance.Duration", 4000);
 		config.addDefault("Abilities.Earth.EarthArmor.UseIronArmor", false);
-		
+
+		config.addDefault("Abilities.Earth.EarthBlast.Enabled", false);
+		config.addDefault("Abilities.Earth.EarthBlast.Description", "Launch a hovering block of earth at your target with a smooth, animated throw. "
+				+ "Sneak (Default: Shift) while looking at an earthbendable block to select it, then Left-Click to launch. "
+				+ "While it is flying, Left-Click to redirect it or Sneak and Left-Click to shatter it.");
+		config.addDefault("Abilities.Earth.EarthBlast.SelectRange", 6.0);
+		config.addDefault("Abilities.Earth.EarthBlast.LaunchRange", 32.0);
+		config.addDefault("Abilities.Earth.EarthBlast.RaiseTicks", 5);
+		config.addDefault("Abilities.Earth.EarthBlast.Speed", 1.45);
+		config.addDefault("Abilities.Earth.EarthBlast.DirectDamage", 3.0);
+		config.addDefault("Abilities.Earth.EarthBlast.FragmentDamage", 2.0);
+		config.addDefault("Abilities.Earth.EarthBlast.Knockback", 1.3);
+		config.addDefault("Abilities.Earth.EarthBlast.UseModernHighlight", false);
+		config.addDefault("Abilities.Earth.EarthBlast.HighlightColor", "#FFFFFF");
+		config.addDefault("Abilities.Earth.EarthBlast.CollisionRadius", 1.0);
+		config.addDefault("Abilities.Earth.EarthBlast.Cooldown", 500);
+		config.addDefault("Abilities.Earth.EarthBlast.RevertTime", 15000);
+		config.addDefault("Abilities.Earth.EarthBlast.AllowFragments", true);
+		config.addDefault("Abilities.Earth.EarthBlast.FragmentCount", 6);
+		config.addDefault("Abilities.Earth.EarthBlast.FragmentSpeed", 0.3);
+		config.addDefault("Abilities.Earth.EarthBlast.MaxHurls", 6);
+		config.addDefault("Abilities.Earth.EarthBlast.TickDuration", 300);
+		config.addDefault("Abilities.Earth.EarthBlast.CollisionParticles", false);
+		config.addDefault("Abilities.Earth.EarthBlast.FragmentParticles", true);
+		config.addDefault("Abilities.Earth.EarthBlast.UseRedirectEasing", true);
+		config.addDefault("Abilities.Earth.EarthBlast.RedirectEasingFactor", 0.15);
+		config.addDefault("Abilities.Earth.EarthBlast.AnimationStyle", "wobble"); // wobble or tumble
+
 		config.addDefault("Abilities.Earth.EarthKick.Enabled", true);
 		config.addDefault("Abilities.Earth.EarthKick.Description", "Kick a spray of earth blocks at your foe. "
 				+ "Tap Sneak (Default: Shift) while looking at an earthbendable block.");
