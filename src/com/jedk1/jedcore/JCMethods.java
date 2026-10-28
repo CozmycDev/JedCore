@@ -292,10 +292,10 @@ public class JCMethods {
 		return false;
 	}
 
-	// todo: see SMALL_PLANTS
 	public static boolean isDoublePlant(Material material) {
 		return material == Material.SUNFLOWER || material == Material.LILAC || material == Material.TALL_GRASS ||
-				material == Material.LARGE_FERN || material == Material.ROSE_BUSH || material == Material.PEONY;
+				material == Material.LARGE_FERN || material == Material.ROSE_BUSH || material == Material.PEONY ||
+				material == Material.PITCHER_PLANT; // + tall dry grass
 	}
 
 	public static boolean isSmallPlant(Block block) {

@@ -5,6 +5,7 @@ import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
@@ -190,12 +191,12 @@ public class LavaFlux extends LavaAbility implements AddonAbility {
 					above.getLocation().getWorld().spawnParticle(Particle.LAVA, above.getLocation(), 2, Math.random(), Math.random(), Math.random(), 0);
 					applyDamageFromWave(above.getLocation());
 
-					if (isPlant(above) || isSnow(above)) {
+					if (ElementalAbility.isPlant(above) || ElementalAbility.isSnow(above)) {
 						final Block above2 = above.getRelative(BlockFace.UP);
-						if (isPlant(above) || isSnow(above)) {
+						if (ElementalAbility.isPlant(above) || ElementalAbility.isSnow(above)) {
 							TempBlock tb = new TempBlock(above, Material.AIR.createBlockData(), duration + cleanup, this);
 							this.above.put(above, tb);
-							if (isPlant(above2) && above2.getBlockData() instanceof Bisected) {
+							if (ElementalAbility.isPlant(above2) && above2.getBlockData() instanceof Bisected) {
 								TempBlock tb2 = new TempBlock(above2, Material.AIR.createBlockData(), duration + cleanup + 30_000, this);
 								tb.addAttachedBlock(tb2);
 							}

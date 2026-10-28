@@ -6,10 +6,8 @@ import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.util.MaterialUtil;
 import com.jedk1.jedcore.util.RegenTempBlock;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AddonAbility;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.*;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.ability.util.ComboUtil;
 import com.projectkorra.projectkorra.airbending.AirSpout;
@@ -201,10 +199,10 @@ public class WaterFlow extends WaterAbility implements AddonAbility, ComboAbilit
 
 			// canUsePlants needs to be checked here due to a bug with PK dynamic source caching.
 			// getWaterSourceBlock can return a plant even if canUsePlants is passed as false.
-			if (isGoodSource || (canUsePlants && isPlant(sourceBlock) && (!requireAdjacentPlants || JCMethods.isAdjacentToThreeOrMoreSources(sourceBlock, sourceBlock.getType())))) {
+			if (isGoodSource || (canUsePlants && ElementalAbility.isPlant(sourceBlock) && (!requireAdjacentPlants || JCMethods.isAdjacentToThreeOrMoreSources(sourceBlock, sourceBlock.getType())))) {
 				head = sourceBlock.getLocation().clone();
 				origin = sourceBlock.getLocation().clone();
-				if (isPlant(sourceBlock)) {
+				if (ElementalAbility.isPlant(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
 				return true;

@@ -281,7 +281,6 @@ public class Combustion extends CombustionAbility implements AddonAbility {
 				Location loc = player.getLocation().add(x, 1.0D, z);
 				playFirebendingParticles(loc, 3, 0.0, 0.0, 0.0);
 				player.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 4, 0.0, 0.0, 0.0, 0.01);
-				LightManager.createLight(loc).emit();
 			}
 		}
 	}

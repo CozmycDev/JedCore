@@ -148,9 +148,24 @@ public class JedCoreConfig {
 				"CACTUS_FLOWER",
 				"BERRY_BUSH",
 				"RED_MUSHROOM",
-				"BROWN_MUSHROOM"
+				"BROWN_MUSHROOM",
+				"PINK_PETALS",
+				"TORCHFLOWER",
+				"PITCHER_PLANT",
+				"PITCHER_CROP",
+				"PALE_HANGING_MOSS",
+				"PALE_MOSS_CARPET",
+				"EYEBLOSSOM",
+				"LEAF_LITTER",
+				"WILDFLOWERS",
+				"FIREFLY_BUSH",
+				"BUSH",
+				"SHORT_DRY_GRASS",
+				"TALL_DRY_GRASS",
+				"OPEN_EYEBLOSSOM",
+				"CLOSED_EYEBLOSSOM"
 		));
-		
+
 		config.addDefault("Abilities.Air.AirBreath.Enabled", false); // now included in PK Core as of 1.13 beta 2
 		config.addDefault("Abilities.Air.AirBreath.Description", "To use, hold Sneak (Default: Shift) to release "
 				+ "a strong breath of wind, knocking your opponents "
