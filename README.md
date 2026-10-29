@@ -507,4 +507,4 @@ Join our [Discord](https://discord.gg/gh9MfDmwZm) to discuss the plugin, suggest
 - Fix bending board ability name length
   - Remove the code that added multiple reset codes. This could make the
   board ability names so long that they would kick players offline.
-- Fix IceWall so ol                                   
+- Fix IceWall so old instances don't block new ones 
