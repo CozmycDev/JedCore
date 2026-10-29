@@ -8,6 +8,76 @@ Download releases [here](https://github.com/CozmycDev/JedCore/releases).
 Join our [Discord](https://discord.gg/gh9MfDmwZm) to discuss the plugin, suggest changes, report bugs, etc.
 
 ## Changelog
+### 2.15.0
+**Requires Minecraft Spigot/Paper 1.20.5+ (tested and working on 26.3) and ProjectKorra 1.12.0+ (also tested and working against PK 1.13.0 Beta 2.)**
+
+*Major shoutout to Snowy2174, Manu585, and Nysseus for their contributions!*
+
+#### General
+- Removed the `VersionAdapter` package and JedCore's custom `LightManager`. Ability particles now use the native Bukkit particle API, and dynamic light uses ProjectKorra's `LightManager`.
+- Removed the `Properties.Fire.DynamicLight.*` and `Abilities.Water.HealingWaters.DynamicLight.*` config options; light is now emitted through ProjectKorra's `LightManager`.
+- Removed the integrated BendingBoard, left the board config file in place for BendingGUI support.
+- Abilities no longer activate when a player drops an item.
+- Removed the hardcoded developer UUID bypass (`isSenderDev`/`isSenderJedCoreDev`). `/b jedcore` now uses normal permissions.
+- Rewrote the descriptions for every ability.
+- Disabled `AirBreath`, `FrostBreath`, and `EarthPillar` by default. AirBreath and FrostBreath are now part of ProjectKorra Core; EarthPillar needs a new implementation.
+- Added `bending.ability.IceSkate` and made `/b toggle waterpassives` toggle IceSkate.
+- Added `Cozmyc (Maintainer)` to the author list.
+- Updated for newer plant materials (including pitcher plant)
+- Refactored imports and ability code across Air, Avatar, Earth, Fire, Water, Chi, and passives, and replaced ParticleEffect usage with native particles across 33 classes.
+
+#### Airbending
+- AirBlade: added `Speed` (1.0), `Knockback` (0.0), and `BlockCutting` options (`Enabled` true, `Revert` true, `RevertTime` 5000, `Materials` list).
+- AirPunch: added `Speed` (1.0).
+- AirSlam: added `Damage` (0.0) (Snow2174).
+- SonicBlast: added `Sound.Name` (`ENTITY_GENERIC_EXPLODE`), `Sound.Volume` (1.0), and `Sound.Pitch` (0.0) (Snowy2174).
+- AirBreath: disabled by default now that it is part of ProjectKorra Core.
+- Meditate: is now a Spiritual ability instead of an Air ability.
+
+#### Waterbending
+- IceClaws: split config into `Punch.*` and `Throw.*` (Cozmyc, suggested by Prusakov Aleksandr), replacing the old top-level `Damage`/`SlowDuration` options. `Punch.Cooldown` 4000, `Punch.Damage` 2.0, `Punch.Slowness` 3, `Punch.SlowDuration` 5000; `Throw.Cooldown` 4000, `Throw.Damage` 2.0, `Throw.Slowness` 3, `Throw.SlowDuration` 5000, `Throw.Speed` 1.0, `Throw.CooldownOnThrow` true (Snowy2174). Added `AllowHandSwap` (true) and dominant-hand support.
+- IceWall: added `DamageRadius` (2.5) and `CanSourceWall` (false); improved even-width walls and fixed walls at y < 1. IceWall is destroyable by other abilities again, with damage handled from Torrent, IceBlast, FireBlast, FireBlastCharged, EarthSmash, Lightning, and Combustion (Manu585).
+- Bloodbending and BloodPuppet: added `AffectBloodbenders` (false); fixed Bloodbending's inverted check so the option works as intended (Snowy2174).
+- FrostBreath: added `SnowUnderEntities` (true) (Snowy2174); disabled by default now that it is part of ProjectKorra Core.
+- WaterFlow: added `RequireAdjacentSources` (true) (Snowy2174); no longer replaces grass.
+- WaterGimbal: added `RequireAdjacentSources` (true); plant sources now also respect the existing `RequireAdjacentPlants` option (Snowy2174).
+- IcePassive: added `LeaveIceDuration` (60) (Snowy2174); added `bending.ability.IceSkate` and `/b toggle waterpassives` support.
+- WakeFishing: fixed a server crash on MC 1.21.4.
+
+#### Earthbending
+- EarthBlast: added an experimental BlockDisplay-based EarthBlast alternative, disabled by default (`Abilities.Earth.EarthBlast.Enabled`). Options include `SelectRange` 6.0, `LaunchRange` 32.0, `RaiseTicks` 5, `Speed` 1.45, `DirectDamage` 3.0, `FragmentDamage` 2.0, `Knockback` 1.3, `UseModernHighlight` false, `HighlightColor` `#FFFFFF`, `CollisionRadius` 1.0, `Cooldown` 500, `RevertTime` 15000, `AllowFragments` true, `FragmentCount` 6, `FragmentSpeed` 0.3, `MaxHurls` 6, `TickDuration` 300, `CollisionParticles` false, `FragmentParticles` true, `UseRedirectEasing` true, `RedirectEasingFactor` 0.15, and `AnimationStyle` (`wobble` or `tumble`).
+- EarthKick: added `AllowMetal` (true), `ReplaceSource` (false), `Damage.Normal` (2.0), `Damage.Metal` (3.0), `MultipleHits` (true), `SourceRange` (2.0), `Spread` (20), and `Velocity` (0.7); the old `Damage` value is migrated to `Damage.Normal`. Allows using DensityShift blocks, can source metal, and reverts TempBlocks before use.
+- EarthLine: fixed sourcing and a dupe glitch; inverted cooldown defaults to `Cooldown` 3000 and `PrepareCooldown` 0.
+- EarthPillar: disabled by default; now progresses alongside other Earth TempBlock/MovedEarth abilities.
+- EarthShard: added `KnockUp.Others.*` and `KnockUp.Self.*` (`Allow`, `Velocity`, `Range`; defaults 1.0/1.5) and made raised source blocks launch nearby entities upward.
+- EarthSurf: added a transparency check before removing the ability (Snowy2174).
+- Fissure: fixed use at y < 1.
+- LavaFlux: added `KnockUp` (1.0) and `KnockBack` (1.0)
+- LavaThrow: fixed `SourceGrabRange` and cooldowns; added `CurveFactor` (0.5); improved lava sourcing and MovedEarth handling.
+- LavaDisc: fixed source handling and MovedEarth compatibility.
+- MagnetShield: overhauled with magnetic field visuals, click-to-activate state (shift is indefinite), and configurable `Duration` (6000), `Cooldowns.Shift` (5000), `Cooldowns.Click` (5000), `Range` (5.0), `RepelArrows` (true), `RepelLivingEntities` (true), `Velocity` (0.1), and `Materials` list.
+- MetalFragments: added `Velocity` (2.0) for projectile speed
+- MudSurge: can now use mud.
+- SandBlast: fixed sourcing.
+- Crevice: added `Width` (3), `CloseWithSneak` (true), and `OnlyUserCanClose` (true); added target validation and fixed the Shockwave combo trigger (Snowy2174).
+- MagmaBlast: simplified collisions for consistency.
+- Improved TempBlock and MovedEarth support across EarthKick, EarthLine, EarthShard, EarthSurf, LavaDisc, LavaThrow, MetalFragments, MetalShred, MudSurge, SandBlast, Crevice, and MagmaBlast.
+
+#### Firebending
+- Combustion: fixed the block-destruction bug so damage and the explosion still occur when block destruction is disabled; only non-air blocks are destroyed; removed random fire; added `SkipMaterials` (defaults to bee growables, cave vines, crops, flowers, vine, and pale hanging moss).
+- FireComet: added `DamageBlocks` (true); block destruction now skips air and sorts top-down; added dynamic light.
+- Discharge and LightningBurst: changed sound from a creeper hiss to a deeper bee buzz (Cozmyc); added `Stun.Chance` (0.01 for Discharge, 0.1 for LightningBurst) and `Stun.Duration` (1000) (Snowy2174); added `Sound.Volume` (0.6) and `Sound.Interval` (6) (higher interval plays less often); rebalanced audio.
+- FireBreath: added `Melt.OnlyIce` (true) to restrict melting to ice; when disabled, it uses ProjectKorra's `HeatControl` melting behavior (Snowy2174). `PlayerDamage` and `MobDamage` are now separate ProjectKorra attributes so attribute modifiers apply correctly (Manu585), and rainbow breath chat triggers accept both "color" and "colour" spelling (Nysseus).
+- FirePunch: added `BurnsDroppedItems` (true) (suggestion by Prusakov Aleksandr); added dominant-hand support; fixed particles.
+- FireShots: emits light from charged shots and while displayed in hand via ProjectKorra's `LightManager`.
+- FireSki: added dynamic light via ProjectKorra's `LightManager`.
+
+#### Avatar
+- ElementSphere: multi-ability names are configurable in `language.yml`
+- SpiritBeam and ElementSphere now use native particles and ProjectKorra's `LightManager`
+
+#### Chi
+- DaggerThrow: added `RequireArrows` (false) and `AllowPickup` (false); now respects the configured damage; removed the unnecessary DamageAbility dependency.
 
 ### 2.14.4
 - Adds light to all fire abilities, SpiritBeam, ElementSphere, and HealingWaters.
@@ -437,5 +507,4 @@ Join our [Discord](https://discord.gg/gh9MfDmwZm) to discuss the plugin, suggest
 - Fix bending board ability name length
   - Remove the code that added multiple reset codes. This could make the
   board ability names so long that they would kick players offline.
-- Fix IceWall so old instances don't block new ones 
-
+- Fix IceWall so ol                                   

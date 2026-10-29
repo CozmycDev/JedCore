@@ -8,18 +8,30 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class JedCoreConfig {
 
 	static JedCore plugin;
-	
+	public static Config board;
+
 	public JedCoreConfig(JedCore plugin) {
 		JedCoreConfig.plugin = plugin;
+		board = new Config(new File("board.yml"));
+		loadConfigBoard();
 		loadConfigCore();
 		addDeathMessages();
 		setupElementSphereNames();
+	}
+
+	private void loadConfigBoard() {
+		FileConfiguration config;
+		config = board.getConfig();
+		config.addDefault("Settings.Enabled", false);
+		config.options().copyDefaults(true);
+		board.saveConfig();
 	}
 	
 	private void loadConfigCore() {
