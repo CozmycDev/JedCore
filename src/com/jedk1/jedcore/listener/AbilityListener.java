@@ -42,6 +42,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
@@ -123,6 +124,51 @@ public class AbilityListener implements Listener {
 					}
 				}
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onLightningStreamDamage(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
+			return;
+		}
+
+		Player player = (Player) event.getEntity();
+		LightningStream lightningStream = CoreAbility.getAbility(player, LightningStream.class);
+		if (lightningStream != null) {
+			lightningStream.onDamageReceived();
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onDischargeDefensiveDamage(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
+			return;
+		}
+
+		Player player = (Player) event.getEntity();
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bendingPlayer == null) {
+			return;
+		}
+
+		if (!"Discharge".equalsIgnoreCase(bendingPlayer.getBoundAbilityName())) {
+			return;
+		}
+
+		if (!player.isSneaking()) {
+			return;
+		}
+
+		if (!Discharge.isLightningDamage(event)) {
+			return;
+		}
+
+		event.setCancelled(true);
+		Discharge.markLightningThreat(player);
+
+		if (!CoreAbility.hasAbility(player, Discharge.class)) {
+			new Discharge(player, true);
 		}
 	}
 
@@ -556,6 +602,9 @@ public class AbilityListener implements Listener {
 				}
 				if (abilClass.equals(LightningBurst.class)) {
 					new LightningBurst(player);
+				}
+				if (abilClass.equals(LightningStream.class)) {
+					new LightningStream(player);
 				}
 			}
 

@@ -763,7 +763,6 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.LightningBurst.Stun.Chance", 0.1);
 		config.addDefault("Abilities.Fire.LightningBurst.Stun.Duration", 1000);
 
-
 		config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 		config.addDefault("Abilities.Water.Bloodbending.Description", "Control an enemy's body by bending the water in their blood. "
 				+ "Hold Sneak (Default: Shift) while looking at them. Left-Click to throw them where you are looking. "

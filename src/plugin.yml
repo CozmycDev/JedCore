@@ -90,6 +90,7 @@ permissions:
       bending.ability.FirePunch: true
       bending.ability.FireShots: true
       bending.ability.LightningBurst: true
+      bending.ability.LightningStream: true
   jedcore.chi:
     default: true
     description: Access to chi abilities.

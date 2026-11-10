@@ -3,33 +3,49 @@ package com.jedk1.jedcore.ability.firebending;
 import com.jedk1.jedcore.JCMethods;
 import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
+import com.jedk1.jedcore.util.lightning.LightningArc;
+import com.jedk1.jedcore.util.lightning.LightningDisplay;
+import com.jedk1.jedcore.util.lightning.LightningElectrocution;
+import com.jedk1.jedcore.util.lightning.LightningStyle;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.region.RegionProtection;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.LightManager;
-import com.projectkorra.projectkorra.util.MovementHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.Particle;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LightningBurst extends LightningAbility implements AddonAbility {
 
+	private static final String DISPLAY_TAG = "jedcore_lightningburst";
+	private static final String CONFIG_PATH = "Abilities.Fire.LightningBurst.";
+	private static final double SOUND_RANGE = 16.0;
 	private static final ConcurrentHashMap<Integer, Bolt> BOLTS = new ConcurrentHashMap<>();
+	private final Set<UUID> playersHearingWarmup = new HashSet<>();
 
 	Random rand = new Random();
+	private LightningDisplay warmupDisplay;
+	private LightningStyle warmupStyle;
+	private LightningStyle burstStyle;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown, avatarCooldown;
 	@Attribute(Attribute.CHARGE_DURATION)
@@ -49,13 +65,20 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 	private float soundVolume;
 	private int soundInterval;
 
+	private String warmupSound;
+	private double warmupSoundVolume;
+	private double warmupSoundPitch;
+	private int warmupSoundInterval;
+	private int warmupSoundTicks;
+
 	public LightningBurst(Player player) {
 		super(player);
 		if (!bPlayer.canBend(this) || hasAbility(player, LightningBurst.class)) {
 			return;
 		}
-		
+
 		setFields();
+		warmupDisplay = new LightningDisplay(warmupStyle);
 		if (bPlayer.isAvatarState() || JCMethods.isSozinsComet(player.getWorld())) {
 			chargeUp = avatarChargeup;
 			cooldown = avatarCooldown;
@@ -63,7 +86,7 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 
 		start();
 	}
-	
+
 	public void setFields() {
 		ConfigurationSection config = JedCoreConfig.getConfig(this.player);
 
@@ -78,6 +101,71 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 
 		soundVolume = (float) config.getDouble("Abilities.Fire.LightningBurst.Sound.Volume");
 		soundInterval = config.getInt("Abilities.Fire.LightningBurst.Sound.Interval");
+
+		warmupSound = config.getString(CONFIG_PATH + "Sound.Warmup.Sound", "ENTITY_BEE_LOOP");
+		warmupSoundVolume = config.getDouble(CONFIG_PATH + "Sound.Warmup.Volume", 0.5);
+		warmupSoundPitch = config.getDouble(CONFIG_PATH + "Sound.Warmup.Pitch", 0.6);
+		warmupSoundInterval = Math.max(1, config.getInt(CONFIG_PATH + "Sound.Warmup.Interval", 20));
+
+		warmupStyle = LightningStyle.builder()
+				.material(Material.LIGHT_BLUE_CONCRETE_POWDER)
+				.thickness(0.03)
+				.lengthPadding(0.01)
+				.brightness(15)
+				.viewRange(1.0f)
+				.emitLight(true)
+				.maxSegments(8)
+				.segmentLength(0.25)
+				.jitter(0.2)
+				.mainArcs(1)
+				.branchChance(0.15)
+				.branchInterval(2, 4)
+				.branchLength(0.3)
+				.subBranchChance(0.2)
+				.subBranchLength(0.15)
+				.branchJitter(0.7)
+				.displayTag(DISPLAY_TAG + "_warmup")
+				.build();
+
+		burstStyle = LightningStyle.builder()
+				.material(Material.LIGHT_BLUE_CONCRETE_POWDER)
+				.thickness(0.05)
+				.lengthPadding(0.02)
+				.brightness(15)
+				.viewRange(1.0f)
+				.emitLight(true)
+				.maxSegments(8)
+				.segmentLength(1.5)
+				.jitter(0.4)
+				.mainArcs(5)
+				.branchChance(0.15)
+				.branchInterval(4, 7)
+				.branchLength(0.22)
+				.subBranchChance(0.3)
+				.subBranchLength(0.12)
+				.branchJitter(0.7)
+				.displayTag(DISPLAY_TAG + "_burst")
+				.build();
+	}
+
+	public static boolean isNearBolt(Player player, double range) {
+		double rangeSquared = range * range;
+		for (Bolt bolt : BOLTS.values()) {
+			if (bolt.ability.player.equals(player)) {
+				continue;
+			}
+
+			Location location = bolt.location;
+			if (location == null || location.getWorld() == null || !location.getWorld().equals(player.getWorld())) {
+				continue;
+			}
+
+			if (location.distanceSquared(player.getLocation()) <= rangeSquared) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Override
@@ -96,66 +184,233 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 		}
 		if (!player.isSneaking()) {
 			if (!isCharging()) {
-				Location fake = player.getLocation().add(0, -2, 0);
-				fake.setPitch(0);
-				for (int i = -180; i < 180; i += 55) {
-					fake.setYaw(i);
-					for (double j = -180; j <= 180; j += 55) {
-						Location temp = fake.clone();
-						Vector dir = fake.getDirection().clone().multiply(2 * Math.cos(Math.toRadians(j)));
-						temp.add(dir);
-						temp.setY(temp.getY() + 2 + (2 * Math.sin(Math.toRadians(j))));
-						dir = GeneralMethods.getDirection(player.getLocation().add(0, 0, 0), temp);
-						spawnBolt(player.getLocation().clone().add(0, 1, 0).setDirection(dir), radius, 1, 20, true);
-					}
-				}
+				releaseHemispheres();
 				bPlayer.addCooldown(this);
 			}
 			remove();
-		} else if (System.currentTimeMillis() > getStartTime() + chargeUp){
-			setCharging(false);
-			displayCharging();
+		} else {
+			if (System.currentTimeMillis() > getStartTime() + chargeUp){
+				if (isCharging()) {
+					setCharging(false);
+					warmupSoundTicks = 0;
+					playWarmupSoundToNearby();
+				}
+				displayCharging();
+			}
+
+			if (!isCharging()) {
+				warmupSoundTicks++;
+				if (warmupSoundTicks >= warmupSoundInterval) {
+					warmupSoundTicks = 0;
+					playWarmupSoundToNearby();
+				}
+			}
 		}
 	}
 
-	private void spawnBolt(Location location, double max, double gap, int arc, boolean doDamage) {
+	private void releaseHemispheres() {
+		spawnHemisphere(true);
+		spawnHemisphere(false);
+		spawnBurstParticles();
+	}
+
+	private void spawnHemisphere(boolean mainHand) {
+		Location hand = mainHand ? GeneralMethods.getMainHandLocation(player) : GeneralMethods.getOffHandLocation(player);
+		Vector axis = getOutwardAxis(hand, mainHand);
+		Location start = hand.clone().add(axis.clone().multiply(0.2));
+
+		Vector perpendicular1 = axis.clone().crossProduct(new Vector(0, 1, 0));
+		if (perpendicular1.lengthSquared() < 0.01) {
+			perpendicular1 = axis.clone().crossProduct(new Vector(1, 0, 0));
+		}
+		perpendicular1.normalize();
+		Vector perpendicular2 = axis.clone().crossProduct(perpendicular1).normalize();
+
+		double[] polarAngles = {0.0, 45.0, 80.0};
+		int[] counts = {1, 6, 10};
+
+		for (int ring = 0; ring < polarAngles.length; ring++) {
+			double theta = Math.toRadians(polarAngles[ring]);
+			double cosTheta = Math.cos(theta);
+			double sinTheta = Math.sin(theta);
+
+			for (int i = 0; i < counts[ring]; i++) {
+				double phi = (Math.PI * 2.0 * i) / counts[ring];
+				Vector direction = axis.clone().multiply(cosTheta)
+						.add(perpendicular1.clone().multiply(Math.cos(phi) * sinTheta))
+						.add(perpendicular2.clone().multiply(Math.sin(phi) * sinTheta))
+						.normalize();
+
+				Location boltStart = start.clone();
+				boltStart.setDirection(direction);
+				spawnBolt(boltStart, radius, 2, 20, true, mainHand);
+			}
+		}
+	}
+
+	private void spawnBurstParticles() {
+		for (boolean mainHand : new boolean[] { true, false }) {
+			Location hand = mainHand ? GeneralMethods.getMainHandLocation(player) : GeneralMethods.getOffHandLocation(player);
+			Vector axis = getOutwardAxis(hand, mainHand);
+			Vector perpendicular1 = axis.clone().crossProduct(new Vector(0, 1, 0));
+			if (perpendicular1.lengthSquared() < 0.01) {
+				perpendicular1 = axis.clone().crossProduct(new Vector(1, 0, 0));
+			}
+			perpendicular1.normalize();
+			Vector perpendicular2 = axis.clone().crossProduct(perpendicular1).normalize();
+
+			for (int i = 0; i < 12; i++) {
+				double theta = rand.nextDouble() * (Math.PI / 2.0);
+				double phi = rand.nextDouble() * Math.PI * 2.0;
+				double distance = 0.5 + rand.nextDouble() * Math.max(1.0, radius * 0.6);
+				Vector direction = axis.clone().multiply(Math.cos(theta))
+						.add(perpendicular1.clone().multiply(Math.cos(phi) * Math.sin(theta)))
+						.add(perpendicular2.clone().multiply(Math.sin(phi) * Math.sin(theta)))
+						.normalize();
+
+				Location particleLocation = hand.clone().add(direction.multiply(distance));
+				playLightningbendingParticle(particleLocation, 0.04, 0.04, 0.04);
+				if (rand.nextInt(3) == 0) {
+					particleLocation.getWorld().spawnParticle(Particle.WAX_OFF, particleLocation, 1, 0.04, 0.04, 0.04, 0.01);
+				}
+			}
+		}
+	}
+
+	void spawnAirParticle() {
+		boolean mainHand = rand.nextBoolean();
+		Location hand = mainHand ? GeneralMethods.getMainHandLocation(player) : GeneralMethods.getOffHandLocation(player);
+		Vector axis = getOutwardAxis(hand, mainHand);
+		Vector perpendicular1 = axis.clone().crossProduct(new Vector(0, 1, 0));
+		if (perpendicular1.lengthSquared() < 0.01) {
+			perpendicular1 = axis.clone().crossProduct(new Vector(1, 0, 0));
+		}
+		perpendicular1.normalize();
+		Vector perpendicular2 = axis.clone().crossProduct(perpendicular1).normalize();
+
+		double theta = rand.nextDouble() * (Math.PI / 2.0);
+		double phi = rand.nextDouble() * Math.PI * 2.0;
+		double distance = 0.5 + rand.nextDouble() * Math.max(1.0, radius * 0.6);
+		Vector direction = axis.clone().multiply(Math.cos(theta))
+				.add(perpendicular1.clone().multiply(Math.cos(phi) * Math.sin(theta)))
+				.add(perpendicular2.clone().multiply(Math.sin(phi) * Math.sin(theta)))
+				.normalize();
+
+		Location particleLocation = hand.clone().add(direction.multiply(distance));
+		playLightningbendingParticle(particleLocation, 0.04, 0.04, 0.04);
+		if (rand.nextInt(4) == 0) {
+			particleLocation.getWorld().spawnParticle(Particle.WAX_OFF, particleLocation, 1, 0.04, 0.04, 0.04, 0.01);
+		}
+	}
+
+	private Vector getOutwardAxis(Location hand, boolean mainHand) {
+		Vector forward = player.getEyeLocation().getDirection().clone().setY(0.0);
+		if (forward.lengthSquared() < 0.01) {
+			forward = player.getLocation().getDirection().clone().setY(0.0);
+		}
+		if (forward.lengthSquared() < 0.01) {
+			forward = new Vector(0, 0, 1);
+		}
+		forward.normalize();
+
+		Vector right = forward.crossProduct(new Vector(0, 1, 0)).normalize();
+		Location center = player.getLocation().add(0, 1, 0);
+		Vector offset = hand.toVector().subtract(center.toVector());
+		offset.setY(0.0);
+
+		double side = offset.dot(right);
+		if (Math.abs(side) < 0.01) {
+			return mainHand ? right : right.clone().multiply(-1);
+		}
+
+		return side > 0 ? right : right.clone().multiply(-1);
+	}
+
+	private void spawnBolt(Location location, double max, double gap, int arc, boolean doDamage, boolean mainHand) {
 		int id = ID;
-		BOLTS.put(id, new Bolt(this, location, id, max, gap, arc, doDamage));
+		BOLTS.put(id, new Bolt(this, location, id, max, gap, arc, doDamage, mainHand));
 		if (ID == Integer.MAX_VALUE)
 			ID = Integer.MIN_VALUE;
 		ID++;
 	}
 
 	private void displayCharging() {
-		Location fake = player.getLocation().add(0, 0, 0);
-		fake.setPitch(0);
-		for (int i = -180; i < 180; i += 55) {
-			fake.setYaw(i);
-			for (double j = -180; j <= 180; j += 55) {
-				if (rand.nextInt(100) == 0) {
-					Location temp = fake.clone();
-					Vector dir = fake.getDirection().clone().multiply(1.2 * Math.cos(Math.toRadians(j)));
-					temp.add(dir);
-					temp.setY(temp.getY() + 1.2 + (1.2 * Math.sin(Math.toRadians(j))));
-					dir = GeneralMethods.getDirection(temp, player.getLocation().add(0, 1, 0));
-					spawnBolt(temp.setDirection(dir), 1, 0.2, 20, false);
-				}
+		if (warmupDisplay == null) {
+			return;
+		}
+
+		List<LightningArc> arcs = new ArrayList<>();
+		arcs.addAll(LightningArc.around(GeneralMethods.getMainHandLocation(player), 0.8, 1, warmupStyle));
+		arcs.addAll(LightningArc.around(GeneralMethods.getOffHandLocation(player), 0.8, 1, warmupStyle));
+		warmupDisplay.render(arcs);
+	}
+
+	private void playWarmupSoundToNearby() {
+		Location soundLocation = player.getEyeLocation();
+
+		for (Entity entity : soundLocation.getWorld().getNearbyEntities(soundLocation, SOUND_RANGE, SOUND_RANGE, SOUND_RANGE, e -> e instanceof Player)) {
+			Player nearbyPlayer = (Player) entity;
+			playConfiguredSound(nearbyPlayer, soundLocation, warmupSound, (float) warmupSoundVolume, (float) warmupSoundPitch);
+			playersHearingWarmup.add(nearbyPlayer.getUniqueId());
+		}
+	}
+
+	private void stopWarmupSounds() {
+		for (UUID playerId : playersHearingWarmup) {
+			Player nearbyPlayer = Bukkit.getPlayer(playerId);
+			if (nearbyPlayer != null && nearbyPlayer.isOnline()) {
+				stopConfiguredSound(nearbyPlayer, warmupSound);
 			}
+		}
+		playersHearingWarmup.clear();
+	}
+
+	private void playConfiguredSound(Player target, Location location, String soundName, float volume, float pitch) {
+		if (soundName == null || soundName.isEmpty()) {
+			return;
+		}
+
+		Sound sound = resolveSound(soundName);
+		if (sound != null) {
+			target.playSound(location, sound, volume, pitch);
+		} else {
+			target.playSound(location, soundName, volume, pitch);
+		}
+	}
+
+	private void stopConfiguredSound(Player target, String soundName) {
+		if (soundName == null || soundName.isEmpty()) {
+			return;
+		}
+
+		Sound sound = resolveSound(soundName);
+		if (sound != null) {
+			target.stopSound(sound);
+		} else {
+			target.stopSound(soundName);
+		}
+	}
+
+	private static Sound resolveSound(String soundName) {
+		try {
+			return Sound.valueOf(soundName.toUpperCase(Locale.ROOT));
+		} catch (IllegalArgumentException exception) {
+			return null;
 		}
 	}
 
 	public static void progressAll() {
 		BOLTS.values().forEach(Bolt::progress);
 	}
-	
+
 	public boolean isCharging() {
 		return !charged;
 	}
-	
+
 	public void setCharging(boolean charging) {
 		this.charged = !charging;
 	}
-	
+
 	@Override
 	public long getCooldown() {
 		return cooldown;
@@ -266,11 +521,21 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 	}
 
 	@Override
+	public void remove() {
+		stopWarmupSounds();
+		if (warmupDisplay != null) {
+			warmupDisplay.remove();
+			warmupDisplay = null;
+		}
+		super.remove();
+	}
+
+	@Override
 	public void load() {}
 
 	@Override
 	public void stop() {}
-	
+
 	@Override
 	public boolean isEnabled() {
 		ConfigurationSection config = JedCoreConfig.getConfig(this.player);
@@ -280,7 +545,9 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 	public class Bolt {
 
 		private final LightningBurst ability;
+		private Location start;
 		private Location location;
+		private Location lastOrigin;
 		private final float initYaw;
 		private final float initPitch;
 		private double step;
@@ -289,73 +556,126 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 		private final int id;
 		private final int arc;
 		private final boolean doDamage;
+		private final boolean mainHand;
+		private final LightningDisplay display;
 
-		public Bolt(LightningBurst ability, Location location, int id, double max, double gap, int arc, boolean doDamage) {
+		public Bolt(LightningBurst ability, Location location, int id, double max, double gap, int arc, boolean doDamage, boolean mainHand) {
 			this.ability = ability;
 			this.location = location;
+			this.start = location.clone();
+			this.mainHand = mainHand;
+			this.lastOrigin = getHandLocation().clone();
 			this.id = id;
 			this.max = max;
 			this.arc = arc;
 			this.gap = gap;
 			this.doDamage = doDamage;
+			this.display = doDamage ? new LightningDisplay(ability.burstStyle) : null;
 			initYaw = location.getYaw();
 			initPitch = location.getPitch();
 		}
 
 		private void progress() {
 			if (this.step >= max) {
-				BOLTS.remove(id);
+				removeBolt();
 				return;
 			}
 			if (RegionProtection.isRegionProtected(player, location, LightningBurst.this) || !isTransparent(location.getBlock())) {
-				BOLTS.remove(id);
+				removeBolt();
 				return;
 			}
-			double step = 0.2;
+			if (!followPlayer()) {
+				removeBolt();
+				return;
+			}
+			double step = 0.5;
 			for (double i = 0; i < gap; i+= step) {
 				this.step += step;
 				location = location.add(location.getDirection().clone().multiply(step));
+			}
+			switch (rand.nextInt(3)) {
+				case 0:
+					location.setYaw(initYaw - arc);
+					break;
+				case 1:
+					location.setYaw(initYaw + arc);
+					break;
+				default:
+					location.setYaw(initYaw);
+					break;
+			}
+			switch (rand.nextInt(3)) {
+				case 0:
+					location.setPitch(initPitch - arc);
+					break;
+				case 1:
+					location.setPitch(initPitch + arc);
+					break;
+				default:
+					location.setPitch(initPitch);
+					break;
+			}
 
-				playLightningbendingParticle(location, 0f, 0f, 0f);
-				LightManager.createLight(location).emit();
+			if (display != null) {
+				display.render(LightningArc.create(start, location, ability.burstStyle));
 			}
-			switch (rand.nextInt(3)) {
-			case 0:
-				location.setYaw(initYaw - arc);
-				break;
-			case 1:
-				location.setYaw(initYaw + arc);
-				break;
-			default:
-				location.setYaw(initYaw);
-				break;
-			}
-			switch (rand.nextInt(3)) {
-			case 0:
-				location.setPitch(initPitch - arc);
-				break;
-			case 1:
-				location.setPitch(initPitch + arc);
-				break;
-			default:
-				location.setPitch(initPitch);
-				break;
+
+			if (rand.nextInt(6) == 0) {
+				ability.spawnAirParticle();
 			}
 
 			if (rand.nextInt(soundInterval) == 0) {
 				location.getWorld().playSound(location, Sound.ENTITY_BEE_HURT, soundVolume, 0.2f);
 			}
 
+			if (!doDamage) {
+				return;
+			}
+
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && doDamage) {
-					DamageHandler.damageEntity(entity, damage, ability);
+				if (!(entity instanceof LivingEntity) || entity.equals(player)) {
+					continue;
 				}
+
+				LivingEntity living = (LivingEntity) entity;
+				DamageHandler.damageEntity(living, damage, ability);
+
 				if (ThreadLocalRandom.current().nextDouble() <= ability.stunChance) {
-					final MovementHandler mh = new MovementHandler((LivingEntity) entity, ability);
-					if (entity instanceof Player && BendingPlayer.getBendingPlayer((Player) entity).isAvatarState())
-						continue;
-					mh.stopWithDuration((long) ability.stunDuration, Element.LIGHTNING.getColor() + "* Electrocuted *"); // @Todo; make message configurable in core pk
+					LightningElectrocution.apply(living, ability, ability.stunDuration);
 				}
+			}
+		}
+
+		private Location getHandLocation() {
+			return mainHand ? GeneralMethods.getMainHandLocation(player) : GeneralMethods.getOffHandLocation(player);
+		}
+
+		private boolean followPlayer() {
+			Location currentOrigin = getHandLocation();
+
+			if (lastOrigin == null) {
+				lastOrigin = currentOrigin.clone();
+				return true;
+			}
+
+			if (!lastOrigin.getWorld().equals(currentOrigin.getWorld())) {
+				return false;
+			}
+
+			Vector shift = currentOrigin.toVector().subtract(lastOrigin.toVector());
+			if (shift.lengthSquared() > 0.0) {
+				start.add(shift);
+				location.add(shift);
+			}
+
+			lastOrigin = currentOrigin.clone();
+			return true;
+		}
+
+		private void removeBolt() {
+			BOLTS.remove(id);
+			if (display != null) {
+				display.remove();
 			}
 		}
 
