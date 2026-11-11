@@ -8,6 +8,7 @@ import com.jedk1.jedcore.util.lightning.LightningDisplay;
 import com.jedk1.jedcore.util.lightning.LightningEffects;
 import com.jedk1.jedcore.util.lightning.LightningElectrocution;
 import com.jedk1.jedcore.util.lightning.LightningStyle;
+import com.jedk1.jedcore.util.lightning.LightningWaterElectrify;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.LightningAbility;
@@ -42,6 +43,7 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 	private static final double SOUND_RANGE = 16.0;
 	private static final ConcurrentHashMap<Integer, Bolt> BOLTS = new ConcurrentHashMap<>();
 	private final Set<UUID> playersHearingWarmup = new HashSet<>();
+	private final Set<UUID> waterElectrified = new HashSet<>();
 
 	Random rand = new Random();
 	private LightningDisplay warmupDisplay;
@@ -61,7 +63,12 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 	private double stunChance;
 	@Attribute("Stun" + Attribute.DURATION)
 	private double stunDuration;
+	@Attribute("WaterElectrifyRange")
+	private double waterElectrifyRange;
+	@Attribute("WaterElectrifyDamage")
+	private double waterElectrifyDamage;
 
+	private boolean waterElectrifyEnabled;
 	private boolean charged;
 	private static int ID = Integer.MIN_VALUE;
 
@@ -93,31 +100,42 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 	public void setFields() {
 		ConfigurationSection config = JedCoreConfig.getConfig(this.player);
 
-		cooldown = config.getLong("Abilities.Fire.LightningBurst.Cooldown");
-		chargeUp = config.getLong("Abilities.Fire.LightningBurst.ChargeUp");
-		avatarCooldown = config.getLong("Abilities.Fire.LightningBurst.AvatarCooldown");
-		avatarChargeup = config.getLong("Abilities.Fire.LightningBurst.AvatarChargeUp");
-		damage = config.getDouble("Abilities.Fire.LightningBurst.Damage");
-		radius = config.getDouble("Abilities.Fire.LightningBurst.Radius");
-		speed = Math.max(0.05, config.getDouble("Abilities.Fire.LightningBurst.Speed", 2.0));
-		stunChance = config.getDouble("Abilities.Fire.LightningBurst.Stun.Chance");
-		stunDuration = config.getDouble("Abilities.Fire.LightningBurst.Stun.Duration");
+		cooldown = config.getLong("Abilities.Fire.LightningBurst.Cooldown", 25000L);
+		chargeUp = config.getLong("Abilities.Fire.LightningBurst.ChargeUp", 4000L);
+		avatarCooldown = config.getLong("Abilities.Fire.LightningBurst.AvatarCooldown", 1000L);
+		avatarChargeup = config.getLong("Abilities.Fire.LightningBurst.AvatarChargeUp", 1000L);
+		damage = config.getDouble("Abilities.Fire.LightningBurst.Damage", 9.0);
+		radius = config.getDouble("Abilities.Fire.LightningBurst.Radius", 12.0);
+		speed = Math.max(0.05, config.getDouble("Abilities.Fire.LightningBurst.Speed", 0.8));
+		stunChance = config.getDouble("Abilities.Fire.LightningBurst.Stun.Chance", 0.1);
+		stunDuration = config.getDouble("Abilities.Fire.LightningBurst.Stun.Duration", 1000.0);
+		waterElectrifyEnabled = config.getBoolean("Abilities.Fire.LightningBurst.WaterElectrify.Enabled", true);
+		waterElectrifyRange = Math.max(0.5, config.getDouble("Abilities.Fire.LightningBurst.WaterElectrify.Range", 3.0));
+		waterElectrifyDamage = Math.max(0.0, config.getDouble("Abilities.Fire.LightningBurst.WaterElectrify.Damage", 5.0));
 
-		soundVolume = (float) config.getDouble("Abilities.Fire.LightningBurst.Sound.Volume");
-		soundInterval = config.getInt("Abilities.Fire.LightningBurst.Sound.Interval");
+		soundVolume = (float) config.getDouble("Abilities.Fire.LightningBurst.Sound.Volume", 0.6);
+		soundInterval = config.getInt("Abilities.Fire.LightningBurst.Sound.Interval", 6);
 
 		warmupSound = config.getString(CONFIG_PATH + "Sound.Warmup.Sound", "ENTITY_BEE_LOOP");
 		warmupSoundVolume = config.getDouble(CONFIG_PATH + "Sound.Warmup.Volume", 0.5);
 		warmupSoundPitch = config.getDouble(CONFIG_PATH + "Sound.Warmup.Pitch", 0.6);
 		warmupSoundInterval = Math.max(1, config.getInt(CONFIG_PATH + "Sound.Warmup.Interval", 20));
 
+		String displayMaterial = config.getString(CONFIG_PATH + "Display.Material", "LIGHT_BLUE_CONCRETE_POWDER");
+		Material material = displayMaterial == null ? null : Material.matchMaterial(displayMaterial);
+		double displayThickness = Math.max(0.01, config.getDouble(CONFIG_PATH + "Display.Thickness", 0.05));
+		double displayLengthPadding = Math.max(0.0, config.getDouble(CONFIG_PATH + "Display.LengthPadding", 0.02));
+		int displayBrightness = Math.max(0, Math.min(15, config.getInt(CONFIG_PATH + "Display.Brightness", 15)));
+		float displayViewRange = (float) Math.max(0.1, config.getDouble(CONFIG_PATH + "Display.ViewRange", 1.0));
+		boolean displayEmitLight = config.getBoolean(CONFIG_PATH + "Display.EmitLight", true);
+
 		warmupStyle = LightningStyle.builder()
-				.material(Material.LIGHT_BLUE_CONCRETE_POWDER)
-				.thickness(0.03)
-				.lengthPadding(0.01)
-				.brightness(15)
-				.viewRange(1.0f)
-				.emitLight(true)
+				.material(material)
+				.thickness(displayThickness)
+				.lengthPadding(displayLengthPadding)
+				.brightness(displayBrightness)
+				.viewRange(displayViewRange)
+				.emitLight(displayEmitLight)
 				.maxSegments(8)
 				.segmentLength(0.25)
 				.jitter(0.2)
@@ -132,12 +150,12 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 				.build();
 
 		burstStyle = LightningStyle.builder()
-				.material(Material.LIGHT_BLUE_CONCRETE_POWDER)
-				.thickness(0.05)
-				.lengthPadding(0.02)
-				.brightness(15)
-				.viewRange(1.0f)
-				.emitLight(true)
+				.material(material)
+				.thickness(displayThickness)
+				.lengthPadding(displayLengthPadding)
+				.brightness(displayBrightness)
+				.viewRange(displayViewRange)
+				.emitLight(displayEmitLight)
 				.maxSegments(8)
 				.segmentLength(1.5)
 				.jitter(0.4)
@@ -631,11 +649,21 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 					break;
 			}
 
-			LightningArc arc = LightningArc.create(start, location, ability.burstStyle);
-			if (display != null) {
-				display.render(arc);
+			List<LightningArc> arcs = new ArrayList<>();
+			arcs.add(LightningArc.create(start, location, ability.burstStyle));
+
+			List<LightningWaterElectrify.Hit> waterHits = new ArrayList<>();
+			if (doDamage && ability.waterElectrifyEnabled && ability.waterElectrifyDamage > 0) {
+				waterHits = LightningWaterElectrify.collectHits(player, arcs, ability.burstStyle, ability.waterElectrifyRange);
+				for (LightningWaterElectrify.Hit hit : waterHits) {
+					arcs.add(hit.getArc());
+				}
 			}
-			LightningEffects.spawnBlockImpactParticles(arc);
+
+			if (display != null) {
+				display.render(arcs);
+			}
+			LightningEffects.spawnBlockImpactParticles(arcs);
 
 			if (rand.nextInt(6) == 0) {
 				ability.spawnAirParticle();
@@ -659,6 +687,13 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 
 				if (ThreadLocalRandom.current().nextDouble() <= ability.stunChance) {
 					LightningElectrocution.apply(living, ability, ability.stunDuration);
+				}
+			}
+
+			for (LightningWaterElectrify.Hit hit : waterHits) {
+				LivingEntity living = hit.getTarget();
+				if (ability.waterElectrified.add(living.getUniqueId())) {
+					LightningWaterElectrify.applyDamage(ability, living, ability.waterElectrifyDamage, ability.stunChance, ability.stunDuration);
 				}
 			}
 		}

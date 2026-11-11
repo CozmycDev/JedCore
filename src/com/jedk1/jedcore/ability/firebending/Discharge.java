@@ -10,6 +10,7 @@ import com.jedk1.jedcore.util.lightning.LightningDisplay;
 import com.jedk1.jedcore.util.lightning.LightningEffects;
 import com.jedk1.jedcore.util.lightning.LightningElectrocution;
 import com.jedk1.jedcore.util.lightning.LightningStyle;
+import com.jedk1.jedcore.util.lightning.LightningWaterElectrify;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -33,9 +34,11 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -45,6 +48,7 @@ public class Discharge extends LightningAbility implements AddonAbility {
 	private static final int MAX_BRANCHES = 5;
 	private static final Map<UUID, Long> LAST_LIGHTNING_THREAT = new ConcurrentHashMap<>();
 	private final HashMap<Integer, Location> branches = new HashMap<>();
+	private final Set<UUID> waterElectrified = new HashSet<>();
 
 	private LightningDisplay display;
 	private LightningStyle lightningStyle;
@@ -76,7 +80,12 @@ public class Discharge extends LightningAbility implements AddonAbility {
 	private double stunChance;
 	@Attribute("Stun" + Attribute.DURATION)
 	private double stunDuration;
+	@Attribute("WaterElectrifyRange")
+	private double waterElectrifyRange;
+	@Attribute("WaterElectrifyDamage")
+	private double waterElectrifyDamage;
 
+	private boolean waterElectrifyEnabled;
 	private float soundVolume;
 	private int soundInterval;
 
@@ -121,30 +130,40 @@ public class Discharge extends LightningAbility implements AddonAbility {
 	public void setFields() {
 		ConfigurationSection config = JedCoreConfig.getConfig(this.player);
 
-		damage = config.getDouble("Abilities.Fire.Discharge.Damage");
+		damage = config.getDouble("Abilities.Fire.Discharge.Damage", 3.0);
 		range = Math.max(0.5, config.getDouble("Abilities.Fire.Discharge.Range", 10.0));
-		speed = Math.max(0.05, config.getDouble("Abilities.Fire.Discharge.Speed", 1.0));
-		cooldown = config.getLong("Abilities.Fire.Discharge.Cooldown");
-		avatarCooldown = config.getLong("Abilities.Fire.Discharge.AvatarCooldown");
+		speed = Math.max(0.05, config.getDouble("Abilities.Fire.Discharge.Speed", 0.6));
+		cooldown = config.getLong("Abilities.Fire.Discharge.Cooldown", 5000L);
+		avatarCooldown = config.getLong("Abilities.Fire.Discharge.AvatarCooldown", 500L);
 		long travelDuration = (long) Math.ceil(range / speed * 50.0) + 250L;
 		duration = Math.max(50L, Math.max(config.getLong("Abilities.Fire.Discharge.Duration", 1000L) / 2L, travelDuration));
-		slotSwapping = config.getBoolean("Abilities.Fire.Discharge.SlotSwapping");
-		entityCollisionRadius = config.getDouble("Abilities.Fire.Discharge.EntityCollisionRadius");
-		stunChance = getConfig().getDouble("Abilities.Fire.Discharge.Stun.Chance");
-		stunDuration = getConfig().getDouble("Abilities.Fire.Discharge.Stun.Duration");
+		slotSwapping = config.getBoolean("Abilities.Fire.Discharge.SlotSwapping", true);
+		entityCollisionRadius = config.getDouble("Abilities.Fire.Discharge.EntityCollisionRadius", 1.0);
+		stunChance = getConfig().getDouble("Abilities.Fire.Discharge.Stun.Chance", 0.01);
+		stunDuration = getConfig().getDouble("Abilities.Fire.Discharge.Stun.Duration", 1000.0);
+		waterElectrifyEnabled = config.getBoolean("Abilities.Fire.Discharge.WaterElectrify.Enabled", true);
+		waterElectrifyRange = Math.max(0.5, config.getDouble("Abilities.Fire.Discharge.WaterElectrify.Range", 3.0));
+		waterElectrifyDamage = Math.max(0.0, config.getDouble("Abilities.Fire.Discharge.WaterElectrify.Damage", 3.5));
 
-		soundVolume = (float) config.getDouble("Abilities.Fire.Discharge.Sound.Volume");
-		soundInterval = config.getInt("Abilities.Fire.Discharge.Sound.Interval");
+		soundVolume = (float) config.getDouble("Abilities.Fire.Discharge.Sound.Volume", 0.6);
+		soundInterval = config.getInt("Abilities.Fire.Discharge.Sound.Interval", 6);
 
 		branchSpace = 0.2;
 
+		String displayMaterial = config.getString("Abilities.Fire.Discharge.Display.Material", "LIGHT_BLUE_CONCRETE_POWDER");
+		Material material = displayMaterial == null ? null : Material.matchMaterial(displayMaterial);
+		double displayThickness = Math.max(0.01, config.getDouble("Abilities.Fire.Discharge.Display.Thickness", 0.05));
+		double displayLengthPadding = Math.max(0.0, config.getDouble("Abilities.Fire.Discharge.Display.LengthPadding", 0.02));
+		int displayBrightness = Math.max(0, Math.min(15, config.getInt("Abilities.Fire.Discharge.Display.Brightness", 15)));
+		float displayViewRange = (float) Math.max(0.1, config.getDouble("Abilities.Fire.Discharge.Display.ViewRange", 1.0));
+
 		lightningStyle = LightningStyle.builder()
-				.material(Material.LIGHT_BLUE_CONCRETE_POWDER)
-				.thickness(0.05)
-				.lengthPadding(0.02)
-				.brightness(15)
-				.viewRange(1.0f)
-				.emitLight(true)
+				.material(material)
+				.thickness(displayThickness)
+				.lengthPadding(displayLengthPadding)
+				.brightness(displayBrightness)
+				.viewRange(displayViewRange)
+				.emitLight(config.getBoolean("Abilities.Fire.Discharge.Display.EmitLight", true))
 				.maxSegments(32)
 				.segmentLength(0.8)
 				.jitter(0.18)
@@ -324,11 +343,26 @@ public class Discharge extends LightningAbility implements AddonAbility {
 
 		cleanup.clear();
 
+		List<LightningWaterElectrify.Hit> waterHits = new ArrayList<>();
+		if (waterElectrifyEnabled && waterElectrifyDamage > 0) {
+			waterHits = LightningWaterElectrify.collectHits(player, arcs, lightningStyle, waterElectrifyRange);
+			for (LightningWaterElectrify.Hit hit : waterHits) {
+				arcs.add(hit.getArc());
+			}
+		}
+
 		if (display != null) {
 			display.render(arcs);
 		}
 
 		LightningEffects.spawnBlockImpactParticles(arcs);
+
+		for (LightningWaterElectrify.Hit hit : waterHits) {
+			LivingEntity target = hit.getTarget();
+			if (waterElectrified.add(target.getUniqueId())) {
+				LightningWaterElectrify.applyDamage(this, target, waterElectrifyDamage, stunChance, stunDuration);
+			}
+		}
 	}
 
 	private Location clampToCollisionRadius(Location point) {
@@ -379,7 +413,7 @@ public class Discharge extends LightningAbility implements AddonAbility {
 	@Override
 	public double getCollisionRadius() {
 		ConfigurationSection config = JedCoreConfig.getConfig(this.player);
-		return config.getDouble("Abilities.Fire.Discharge.AbilityCollisionRadius");
+		return config.getDouble("Abilities.Fire.Discharge.AbilityCollisionRadius", 1.0);
 	}
 
 	@Override

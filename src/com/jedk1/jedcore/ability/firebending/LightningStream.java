@@ -8,6 +8,7 @@ import com.jedk1.jedcore.util.lightning.LightningDisplay;
 import com.jedk1.jedcore.util.lightning.LightningEffects;
 import com.jedk1.jedcore.util.lightning.LightningElectrocution;
 import com.jedk1.jedcore.util.lightning.LightningStyle;
+import com.jedk1.jedcore.util.lightning.LightningWaterElectrify;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.LightningAbility;
@@ -54,6 +55,7 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 	private final List<LightningArc.Segment> segments = new ArrayList<>();
 	private final Set<UUID> damagedEntities = new HashSet<>();
 	private final Set<UUID> playersHearingSound = new HashSet<>();
+	private final Set<UUID> playersHearingWarmup = new HashSet<>();
 
 	private int regenerationTicks;
 	private int soundTicks;
@@ -116,6 +118,11 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 	private double loopSoundVolume;
 	private double loopSoundPitch;
 	private int loopSoundInterval;
+	private String warmupSound;
+	private double warmupSoundVolume;
+	private double warmupSoundPitch;
+	private int warmupSoundInterval;
+	private int warmupSoundTicks;
 	private String fadeoutSound;
 	private double fadeoutSoundVolume;
 	private double fadeoutSoundPitch;
@@ -136,6 +143,7 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 			this.maxWarmupTicks = (int) Math.max(1, warmupDuration / 50);
 			this.warmupDisplay = new LightningDisplay(warmupStyle);
 			displayWarmup();
+			playWarmupSoundToNearby();
 		} else {
 			beginStream();
 		}
@@ -144,6 +152,7 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 	private void beginStream() {
 		this.warmingUp = false;
 		this.streamStarted = true;
+		stopWarmupSounds();
 
 		if (warmupDisplay != null) {
 			warmupDisplay.remove();
@@ -162,23 +171,23 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 		ConfigurationSection config = JedCoreConfig.getConfig(this.player);
 
 		range = config.getDouble(CONFIG_PATH + "Range", 8.0);
-		damage = config.getDouble(CONFIG_PATH + "Damage", 8.0);
-		knockback = config.getDouble(CONFIG_PATH + "Knockback", 0.8);
+		damage = config.getDouble(CONFIG_PATH + "Damage", 6.0);
+		knockback = config.getDouble(CONFIG_PATH + "Knockback", 0.6);
 		stunChance = Math.max(0.0, Math.min(1.0, config.getDouble(CONFIG_PATH + "Stun.Chance", 0.1)));
 		stunDuration = Math.max(0.0, config.getDouble(CONFIG_PATH + "Stun.Duration", 1000));
-		regenerateInterval = Math.max(1, config.getInt(CONFIG_PATH + "RegenerateInterval", 2));
-		duration = Math.max(50, config.getLong(CONFIG_PATH + "Duration", 30000));
-		cooldown = config.getLong(CONFIG_PATH + "Cooldown", 4000);
+		regenerateInterval = Math.max(1, config.getInt(CONFIG_PATH + "RegenerateInterval", 1));
+		duration = Math.max(50, config.getLong(CONFIG_PATH + "Duration", 15000));
+		cooldown = config.getLong(CONFIG_PATH + "Cooldown", 15000);
 		removeOnDamage = config.getBoolean(CONFIG_PATH + "RemoveOnDamage", true);
 		waterElectrifyEnabled = config.getBoolean(CONFIG_PATH + "WaterElectrify.Enabled", true);
 		waterElectrifyRange = Math.max(0.5, config.getDouble(CONFIG_PATH + "WaterElectrify.Range", 3.0));
 		waterElectrifyDamage = Math.max(0.0, config.getDouble(CONFIG_PATH + "WaterElectrify.Damage", 4.0));
 		particlesEnabled = config.getBoolean(CONFIG_PATH + "Particles.Enabled", true);
 
-		maxSegments = Math.max(2, config.getInt(CONFIG_PATH + "MaxSegments", 24));
+		maxSegments = Math.max(2, config.getInt(CONFIG_PATH + "MaxSegments", 12));
 		segmentLength = Math.max(0.1, config.getDouble(CONFIG_PATH + "SegmentLength", 0.6));
-		jitterAmount = Math.max(0.0, config.getDouble(CONFIG_PATH + "JitterAmount", 0.2));
-		displayThickness = Math.max(0.01, config.getDouble(CONFIG_PATH + "Display.Thickness", 0.05));
+		jitterAmount = Math.max(0.0, config.getDouble(CONFIG_PATH + "JitterAmount", 0.3));
+		displayThickness = Math.max(0.01, config.getDouble(CONFIG_PATH + "Display.Thickness", 0.045));
 		displayLengthPadding = Math.max(0.0, config.getDouble(CONFIG_PATH + "Display.LengthPadding", 0.02));
 		displayBrightness = Math.max(0, Math.min(15, config.getInt(CONFIG_PATH + "Display.Brightness", 15)));
 		displayViewRange = (float) Math.max(0.1, config.getDouble(CONFIG_PATH + "Display.ViewRange", 1.0));
@@ -208,14 +217,18 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 				.build();
 
 		loopSound = config.getString(CONFIG_PATH + "Sound.Loop", "ENTITY_BEE_LOOP");
-		loopSoundVolume = config.getDouble(CONFIG_PATH + "Sound.LoopVolume", 0.5);
-		loopSoundPitch = config.getDouble(CONFIG_PATH + "Sound.LoopPitch", 0.8);
-		loopSoundInterval = Math.max(1, config.getInt(CONFIG_PATH + "Sound.LoopInterval", 20));
+		loopSoundVolume = config.getDouble(CONFIG_PATH + "Sound.LoopVolume", 1.0);
+		loopSoundPitch = config.getDouble(CONFIG_PATH + "Sound.LoopPitch", 0.6);
+		loopSoundInterval = Math.max(1, config.getInt(CONFIG_PATH + "Sound.LoopInterval", 1));
+		warmupSound = config.getString(CONFIG_PATH + "Sound.Warmup.Sound", "ENTITY_BEE_LOOP");
+		warmupSoundVolume = config.getDouble(CONFIG_PATH + "Sound.Warmup.Volume", 0.5);
+		warmupSoundPitch = config.getDouble(CONFIG_PATH + "Sound.Warmup.Pitch", 0.6);
+		warmupSoundInterval = Math.max(1, config.getInt(CONFIG_PATH + "Sound.Warmup.Interval", 20));
 		fadeoutSound = config.getString(CONFIG_PATH + "Sound.Fadeout", "ENTITY_LIGHTNING_BOLT_IMPACT");
 		fadeoutSoundVolume = config.getDouble(CONFIG_PATH + "Sound.FadeoutVolume", 0.6);
 		fadeoutSoundPitch = config.getDouble(CONFIG_PATH + "Sound.FadeoutPitch", 0.8);
 
-		warmupDuration = config.getLong(CONFIG_PATH + "Warmup.Duration", 1500);
+		warmupDuration = config.getLong(CONFIG_PATH + "Warmup.Duration", 2500);
 		warmupEnabled = config.getBoolean(CONFIG_PATH + "Warmup.Enabled", true) && warmupDuration > 0;
 
 		warmupStyle = LightningStyle.builder()
@@ -290,6 +303,15 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 		for (LightningArc arc : arcs) {
 			segments.addAll(arc.getSegments());
 		}
+		int baseArcCount = arcs.size();
+
+		List<LightningWaterElectrify.Hit> waterHits = new ArrayList<>();
+		if (waterElectrifyEnabled && waterElectrifyDamage > 0) {
+			waterHits = LightningWaterElectrify.collectHits(player, arcs, lightningStyle, waterElectrifyRange);
+			for (LightningWaterElectrify.Hit hit : waterHits) {
+				arcs.add(hit.getArc());
+			}
+		}
 
 		display.render(arcs);
 		spawnBranchParticles();
@@ -303,15 +325,21 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 			checkDamageAlongSegment(segment.getFrom(), segment.getTo());
 		}
 
-		electrifyWater();
+		for (LightningWaterElectrify.Hit hit : waterHits) {
+			LivingEntity living = hit.getTarget();
+			if (!damagedEntities.contains(living.getUniqueId())) {
+				LightningWaterElectrify.applyDamage(this, living, waterElectrifyDamage, stunChance, stunDuration);
+				damagedEntities.add(living.getUniqueId());
+			}
+		}
 
 		LightningEffects.spawnBlockImpactParticles(arcs);
 
 		if (registeredLightning != null) {
 			List<Location> endpoints = new ArrayList<>();
 
-			for (LightningArc arc : arcs) {
-				endpoints.addAll(arc.getBranchEndpoints());
+			for (int i = 0; i < baseArcCount; i++) {
+				endpoints.addAll(arcs.get(i).getBranchEndpoints());
 			}
 
 			if (!segments.isEmpty()) {
@@ -331,12 +359,12 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 		for (LightningArc arc : arcs) {
 			for (List<Location> path : arc.getBranches()) {
 				for (int i = 0; i < path.size(); i += 2) {
-					if (RANDOM.nextInt(99) > 5) {
+					if (RANDOM.nextInt(99) > 95) {
 						playLightningbendingParticle(path.get(i), 0.03, 0.03, 0.03);
 					}
 				}
 
-				if (!path.isEmpty() && RANDOM.nextInt(99) > 5) {
+				if (!path.isEmpty() && RANDOM.nextInt(99) > 95) {
 					playLightningbendingParticle(path.get(path.size() - 1), 0.08, 0.08, 0.08);
 				}
 			}
@@ -352,59 +380,6 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 				damagedEntities.add(living.getUniqueId());
 			}
 		}
-	}
-
-	private void electrifyWater() {
-		if (!waterElectrifyEnabled || waterElectrifyDamage <= 0) {
-			return;
-		}
-
-		double rangeSquared = waterElectrifyRange * waterElectrifyRange;
-
-		for (LightningArc.Segment segment : segments) {
-			double searchRadius = waterElectrifyRange + segment.getFrom().distance(segment.getTo());
-			Location mid = segment.getFrom().clone().add(segment.getTo()).multiply(0.5);
-
-			for (Entity entity : mid.getWorld().getNearbyEntities(mid, searchRadius, searchRadius, searchRadius, e -> e instanceof LivingEntity)) {
-				LivingEntity living = (LivingEntity) entity;
-				if (living.equals(player) || damagedEntities.contains(living.getUniqueId()) || !living.isInWater()) {
-					continue;
-				}
-
-				if (distanceSquaredToSegment(living.getLocation(), segment.getFrom(), segment.getTo()) > rangeSquared) {
-					continue;
-				}
-
-				applyWaterElectrifyDamage(living);
-				damagedEntities.add(living.getUniqueId());
-			}
-		}
-	}
-
-	private double distanceSquaredToSegment(Location point, Location from, Location to) {
-		Vector fromVector = from.toVector();
-		Vector segment = to.toVector().subtract(fromVector);
-		double segmentLengthSquared = segment.lengthSquared();
-
-		if (segmentLengthSquared < 0.0001) {
-			return point.toVector().distanceSquared(fromVector);
-		}
-
-		Vector pointVector = point.toVector();
-		double t = pointVector.clone().subtract(fromVector).dot(segment) / segmentLengthSquared;
-		t = Math.max(0.0, Math.min(1.0, t));
-
-		Vector closestPoint = fromVector.clone().add(segment.multiply(t));
-		return pointVector.distanceSquared(closestPoint);
-	}
-
-	private void applyWaterElectrifyDamage(LivingEntity target) {
-		DamageHandler.damageEntity(target, waterElectrifyDamage, this);
-		electrocute(target);
-
-		Location effectLocation = target.getLocation().add(0, 0.5, 0);
-		target.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, effectLocation, 12, 0.4, 0.4, 0.4, 0.1);
-		target.getWorld().spawnParticle(Particle.BUBBLE_POP, effectLocation, 6, 0.3, 0.3, 0.3, 0.02);
 	}
 
 	private void applyDamage(LivingEntity target, double damageAmount) {
@@ -466,6 +441,11 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 				beginStream();
 			} else {
 				displayWarmup();
+				warmupSoundTicks++;
+				if (warmupSoundTicks >= warmupSoundInterval) {
+					warmupSoundTicks = 0;
+					playWarmupSoundToNearby();
+				}
 				return;
 			}
 		}
@@ -507,6 +487,7 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 			stopLoopSounds();
 			playFadeoutSoundToNearby();
 		}
+		stopWarmupSounds();
 		if (warmupDisplay != null) {
 			warmupDisplay.remove();
 			warmupDisplay = null;
@@ -547,12 +528,32 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 		}
 	}
 
+	private void playWarmupSoundToNearby() {
+		Location soundLocation = player.getEyeLocation();
+
+		for (Entity entity : soundLocation.getWorld().getNearbyEntities(soundLocation, SOUND_RANGE, SOUND_RANGE, SOUND_RANGE, e -> e instanceof Player)) {
+			Player nearbyPlayer = (Player) entity;
+			playConfiguredSound(nearbyPlayer, soundLocation, warmupSound, (float) warmupSoundVolume, (float) warmupSoundPitch);
+			playersHearingWarmup.add(nearbyPlayer.getUniqueId());
+		}
+	}
+
 	private void playFadeoutSoundToNearby() {
 		Location soundLocation = player.getEyeLocation();
 
 		for (Entity entity : soundLocation.getWorld().getNearbyEntities(soundLocation, SOUND_RANGE, SOUND_RANGE, SOUND_RANGE, e -> e instanceof Player)) {
 			playConfiguredSound((Player) entity, soundLocation, fadeoutSound, (float) fadeoutSoundVolume, (float) fadeoutSoundPitch);
 		}
+	}
+
+	private void stopWarmupSounds() {
+		for (UUID playerId : playersHearingWarmup) {
+			Player nearbyPlayer = Bukkit.getPlayer(playerId);
+			if (nearbyPlayer != null && nearbyPlayer.isOnline()) {
+				stopConfiguredSound(nearbyPlayer, warmupSound);
+			}
+		}
+		playersHearingWarmup.clear();
 	}
 
 	private void stopLoopSounds() {

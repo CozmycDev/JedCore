@@ -644,20 +644,29 @@ public class JedCoreConfig {
 
 		config.addDefault("Abilities.Fire.Discharge.Enabled", true);
 		config.addDefault("Abilities.Fire.Discharge.Description", "Shoot bolts of electricity from your fingertips at whatever you hit. "
-				+ "Left-Click to use it.");
+				+ "Left-Click to use it. Discharge can also redirect most lightning bolts by holding shift.");
 		config.addDefault("Abilities.Fire.Discharge.Damage", 3.0);
 		config.addDefault("Abilities.Fire.Discharge.Cooldown", 5000);
 		config.addDefault("Abilities.Fire.Discharge.AvatarCooldown", 500);
 		config.addDefault("Abilities.Fire.Discharge.Duration", 1000);
 		config.addDefault("Abilities.Fire.Discharge.Range", 10.0);
-		config.addDefault("Abilities.Fire.Discharge.Speed", 1.0);
-		config.addDefault("Abilities.Fire.Discharge.SlotSwapping", false);
+		config.addDefault("Abilities.Fire.Discharge.Speed", 0.6);
+		config.addDefault("Abilities.Fire.Discharge.SlotSwapping", true);
 		config.addDefault("Abilities.Fire.Discharge.EntityCollisionRadius", 1.0);
 		config.addDefault("Abilities.Fire.Discharge.AbilityCollisionRadius", 1.0);
+		config.addDefault("Abilities.Fire.Discharge.Display.Material", "LIGHT_BLUE_CONCRETE_POWDER");
+		config.addDefault("Abilities.Fire.Discharge.Display.Thickness", 0.05);
+		config.addDefault("Abilities.Fire.Discharge.Display.LengthPadding", 0.02);
+		config.addDefault("Abilities.Fire.Discharge.Display.Brightness", 15);
+		config.addDefault("Abilities.Fire.Discharge.Display.ViewRange", 1.0);
+		config.addDefault("Abilities.Fire.Discharge.Display.EmitLight", true);
 		config.addDefault("Abilities.Fire.Discharge.Sound.Volume", 0.6);
 		config.addDefault("Abilities.Fire.Discharge.Sound.Interval", 6);
 		config.addDefault("Abilities.Fire.Discharge.Stun.Chance", 0.01);
 		config.addDefault("Abilities.Fire.Discharge.Stun.Duration", 1000);
+		config.addDefault("Abilities.Fire.Discharge.WaterElectrify.Enabled", true);
+		config.addDefault("Abilities.Fire.Discharge.WaterElectrify.Range", 3.0);
+		config.addDefault("Abilities.Fire.Discharge.WaterElectrify.Damage", 3.5);
 		
 		config.addDefault("Abilities.Fire.FireBall.Enabled", true);
 		config.addDefault("Abilities.Fire.FireBall.Description", "Shoot a fireball at your target. "
@@ -759,12 +768,63 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.LightningBurst.AvatarCooldown", 1000);
 		config.addDefault("Abilities.Fire.LightningBurst.AvatarChargeUp", 1000);
 		config.addDefault("Abilities.Fire.LightningBurst.Radius", 12);
-		config.addDefault("Abilities.Fire.LightningBurst.Speed", 2.0);
+		config.addDefault("Abilities.Fire.LightningBurst.Speed", 0.8);
 		config.addDefault("Abilities.Fire.LightningBurst.Damage", 9.0);
+		config.addDefault("Abilities.Fire.LightningBurst.Display.Material", "LIGHT_BLUE_CONCRETE_POWDER");
+		config.addDefault("Abilities.Fire.LightningBurst.Display.Thickness", 0.05);
+		config.addDefault("Abilities.Fire.LightningBurst.Display.LengthPadding", 0.02);
+		config.addDefault("Abilities.Fire.LightningBurst.Display.Brightness", 15);
+		config.addDefault("Abilities.Fire.LightningBurst.Display.ViewRange", 1.0);
+		config.addDefault("Abilities.Fire.LightningBurst.Display.EmitLight", true);
 		config.addDefault("Abilities.Fire.LightningBurst.Sound.Volume", 0.6);
 		config.addDefault("Abilities.Fire.LightningBurst.Sound.Interval", 6);
+		config.addDefault("Abilities.Fire.LightningBurst.Sound.Warmup.Sound", "ENTITY_BEE_LOOP");
+		config.addDefault("Abilities.Fire.LightningBurst.Sound.Warmup.Volume", 0.5);
+		config.addDefault("Abilities.Fire.LightningBurst.Sound.Warmup.Pitch", 0.6);
+		config.addDefault("Abilities.Fire.LightningBurst.Sound.Warmup.Interval", 20);
 		config.addDefault("Abilities.Fire.LightningBurst.Stun.Chance", 0.1);
 		config.addDefault("Abilities.Fire.LightningBurst.Stun.Duration", 1000);
+		config.addDefault("Abilities.Fire.LightningBurst.WaterElectrify.Enabled", true);
+		config.addDefault("Abilities.Fire.LightningBurst.WaterElectrify.Range", 3.0);
+		config.addDefault("Abilities.Fire.LightningBurst.WaterElectrify.Damage", 5.0);
+
+		config.addDefault("Abilities.Fire.LightningStream.Enabled", true);
+		config.addDefault("Abilities.Fire.LightningStream.Description", "Unleash jagged streams of lightning from your fingertips. "
+				+ "Hold Sneak (Default: Shift) to maintain the stream and release it to stop.");
+		config.addDefault("Abilities.Fire.LightningStream.Cooldown", 15000);
+		config.addDefault("Abilities.Fire.LightningStream.Duration", 15000);
+		config.addDefault("Abilities.Fire.LightningStream.Range", 8.0);
+		config.addDefault("Abilities.Fire.LightningStream.Damage", 6.0);
+		config.addDefault("Abilities.Fire.LightningStream.Knockback", 0.6);
+		config.addDefault("Abilities.Fire.LightningStream.Stun.Chance", 0.1);
+		config.addDefault("Abilities.Fire.LightningStream.Stun.Duration", 1000);
+		config.addDefault("Abilities.Fire.LightningStream.MaxSegments", 12);
+		config.addDefault("Abilities.Fire.LightningStream.SegmentLength", 0.6);
+		config.addDefault("Abilities.Fire.LightningStream.JitterAmount", 0.3);
+		config.addDefault("Abilities.Fire.LightningStream.RegenerateInterval", 1);
+		config.addDefault("Abilities.Fire.LightningStream.RemoveOnDamage", true);
+		config.addDefault("Abilities.Fire.LightningStream.WaterElectrify.Enabled", true);
+		config.addDefault("Abilities.Fire.LightningStream.WaterElectrify.Range", 3.0);
+		config.addDefault("Abilities.Fire.LightningStream.WaterElectrify.Damage", 4.0);
+		config.addDefault("Abilities.Fire.LightningStream.Display.Material", "LIGHT_BLUE_CONCRETE_POWDER");
+		config.addDefault("Abilities.Fire.LightningStream.Display.Thickness", 0.045);
+		config.addDefault("Abilities.Fire.LightningStream.Display.LengthPadding", 0.02);
+		config.addDefault("Abilities.Fire.LightningStream.Display.Brightness", 15);
+		config.addDefault("Abilities.Fire.LightningStream.Display.ViewRange", 1.0);
+		config.addDefault("Abilities.Fire.LightningStream.Display.EmitLight", true);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.Loop", "ENTITY_BEE_LOOP");
+		config.addDefault("Abilities.Fire.LightningStream.Sound.LoopVolume", 1.0);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.LoopPitch", 0.6);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.LoopInterval", 1);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.Warmup.Sound", "ENTITY_BEE_LOOP");
+		config.addDefault("Abilities.Fire.LightningStream.Sound.Warmup.Volume", 0.5);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.Warmup.Pitch", 0.6);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.Warmup.Interval", 20);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.Fadeout", "ENTITY_LIGHTNING_BOLT_IMPACT");
+		config.addDefault("Abilities.Fire.LightningStream.Sound.FadeoutVolume", 0.6);
+		config.addDefault("Abilities.Fire.LightningStream.Sound.FadeoutPitch", 0.8);
+		config.addDefault("Abilities.Fire.LightningStream.Warmup.Enabled", true);
+		config.addDefault("Abilities.Fire.LightningStream.Warmup.Duration", 2500);
 
 		config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 		config.addDefault("Abilities.Water.Bloodbending.Description", "Control an enemy's body by bending the water in their blood. "
@@ -1022,6 +1082,7 @@ public class JedCoreConfig {
 		lang.addDefault("Abilities.Fire.FirePunch.DeathMessage", "{victim} punched out from {attacker}'s {ability}");
 		lang.addDefault("Abilities.Fire.FireShots.DeathMessage", "{victim} was shot by {attacker}'s {ability}");
 		lang.addDefault("Abilities.Fire.LightningBurst.DeathMessage", "{victim} crackled out of existence from {attacker}'s {ability}");
+		lang.addDefault("Abilities.Fire.LightningStream.DeathMessage", "{victim} was struck down by {attacker}'s {ability}");
 
 		//Water
 		lang.addDefault("Abilities.Water.Drain.DeathMessage", "{victim} was blasted by {attacker}'s {ability}");
