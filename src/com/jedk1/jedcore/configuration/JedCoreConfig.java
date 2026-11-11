@@ -649,6 +649,8 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.Discharge.Cooldown", 5000);
 		config.addDefault("Abilities.Fire.Discharge.AvatarCooldown", 500);
 		config.addDefault("Abilities.Fire.Discharge.Duration", 1000);
+		config.addDefault("Abilities.Fire.Discharge.Range", 10.0);
+		config.addDefault("Abilities.Fire.Discharge.Speed", 1.0);
 		config.addDefault("Abilities.Fire.Discharge.SlotSwapping", false);
 		config.addDefault("Abilities.Fire.Discharge.EntityCollisionRadius", 1.0);
 		config.addDefault("Abilities.Fire.Discharge.AbilityCollisionRadius", 1.0);
@@ -757,6 +759,7 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Fire.LightningBurst.AvatarCooldown", 1000);
 		config.addDefault("Abilities.Fire.LightningBurst.AvatarChargeUp", 1000);
 		config.addDefault("Abilities.Fire.LightningBurst.Radius", 12);
+		config.addDefault("Abilities.Fire.LightningBurst.Speed", 2.0);
 		config.addDefault("Abilities.Fire.LightningBurst.Damage", 9.0);
 		config.addDefault("Abilities.Fire.LightningBurst.Sound.Volume", 0.6);
 		config.addDefault("Abilities.Fire.LightningBurst.Sound.Interval", 6);

@@ -5,6 +5,7 @@ import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.util.LightningCollisionSystem;
 import com.jedk1.jedcore.util.lightning.LightningArc;
 import com.jedk1.jedcore.util.lightning.LightningDisplay;
+import com.jedk1.jedcore.util.lightning.LightningEffects;
 import com.jedk1.jedcore.util.lightning.LightningElectrocution;
 import com.jedk1.jedcore.util.lightning.LightningStyle;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -304,17 +305,7 @@ public class LightningStream extends LightningAbility implements AddonAbility {
 
 		electrifyWater();
 
-		Set<String> spawnedBlockImpacts = new HashSet<>();
-		for (LightningArc arc : arcs) {
-			for (Location impact : arc.getBlockHits()) {
-				String key = impact.getWorld().getName() + ":" + Math.round(impact.getX() * 10) + ":" + Math.round(impact.getY() * 10) + ":" + Math.round(impact.getZ() * 10);
-				if (!spawnedBlockImpacts.add(key)) {
-					continue;
-				}
-				impact.getWorld().spawnParticle(Particle.POOF, impact, 1, 0.0, 0.0, 0.0, 0.01);
-				impact.getWorld().spawnParticle(Particle.SMOKE, impact, 3, 0.0, 0.0, 0.0, 0.01);
-			}
-		}
+		LightningEffects.spawnBlockImpactParticles(arcs);
 
 		if (registeredLightning != null) {
 			List<Location> endpoints = new ArrayList<>();

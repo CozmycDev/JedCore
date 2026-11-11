@@ -5,6 +5,7 @@ import com.jedk1.jedcore.JedCore;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.util.lightning.LightningArc;
 import com.jedk1.jedcore.util.lightning.LightningDisplay;
+import com.jedk1.jedcore.util.lightning.LightningEffects;
 import com.jedk1.jedcore.util.lightning.LightningElectrocution;
 import com.jedk1.jedcore.util.lightning.LightningStyle;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -54,6 +55,8 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 	private double damage;
 	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute(Attribute.SPEED)
+	private double speed;
 	@Attribute("StunChance")
 	private double stunChance;
 	@Attribute("Stun" + Attribute.DURATION)
@@ -96,6 +99,7 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 		avatarChargeup = config.getLong("Abilities.Fire.LightningBurst.AvatarChargeUp");
 		damage = config.getDouble("Abilities.Fire.LightningBurst.Damage");
 		radius = config.getDouble("Abilities.Fire.LightningBurst.Radius");
+		speed = Math.max(0.05, config.getDouble("Abilities.Fire.LightningBurst.Speed", 2.0));
 		stunChance = config.getDouble("Abilities.Fire.LightningBurst.Stun.Chance");
 		stunDuration = config.getDouble("Abilities.Fire.LightningBurst.Stun.Duration");
 
@@ -144,6 +148,7 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 				.subBranchChance(0.3)
 				.subBranchLength(0.12)
 				.branchJitter(0.7)
+				.clipToBlocks(true)
 				.displayTag(DISPLAY_TAG + "_burst")
 				.build();
 	}
@@ -243,7 +248,7 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 
 				Location boltStart = start.clone();
 				boltStart.setDirection(direction);
-				spawnBolt(boltStart, radius, 2, 20, true, mainHand);
+				spawnBolt(boltStart, radius, speed, 20, true, mainHand);
 			}
 		}
 	}
@@ -496,6 +501,14 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 		this.radius = radius;
 	}
 
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
 	public double getStunChance() {
 		return stunChance;
 	}
@@ -588,10 +601,12 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 				removeBolt();
 				return;
 			}
-			double step = 0.5;
-			for (double i = 0; i < gap; i+= step) {
-				this.step += step;
-				location = location.add(location.getDirection().clone().multiply(step));
+			double distance = Math.min(gap, max - this.step);
+			int steps = Math.max(1, (int) Math.ceil(distance / 0.5));
+			double stepDistance = distance / steps;
+			for (int i = 0; i < steps; i++) {
+				this.step += stepDistance;
+				location = location.add(location.getDirection().clone().multiply(stepDistance));
 			}
 			switch (rand.nextInt(3)) {
 				case 0:
@@ -616,9 +631,11 @@ public class LightningBurst extends LightningAbility implements AddonAbility {
 					break;
 			}
 
+			LightningArc arc = LightningArc.create(start, location, ability.burstStyle);
 			if (display != null) {
-				display.render(LightningArc.create(start, location, ability.burstStyle));
+				display.render(arc);
 			}
+			LightningEffects.spawnBlockImpactParticles(arc);
 
 			if (rand.nextInt(6) == 0) {
 				ability.spawnAirParticle();

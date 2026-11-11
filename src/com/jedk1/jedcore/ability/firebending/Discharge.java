@@ -7,6 +7,7 @@ import com.jedk1.jedcore.collision.Sphere;
 import com.jedk1.jedcore.configuration.JedCoreConfig;
 import com.jedk1.jedcore.util.lightning.LightningArc;
 import com.jedk1.jedcore.util.lightning.LightningDisplay;
+import com.jedk1.jedcore.util.lightning.LightningEffects;
 import com.jedk1.jedcore.util.lightning.LightningElectrocution;
 import com.jedk1.jedcore.util.lightning.LightningStyle;
 import com.projectkorra.projectkorra.BendingPlayer;
@@ -41,6 +42,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Discharge extends LightningAbility implements AddonAbility {
 	private static final String DISPLAY_TAG = "jedcore_discharge";
+	private static final int MAX_BRANCHES = 5;
 	private static final Map<UUID, Long> LAST_LIGHTNING_THREAT = new ConcurrentHashMap<>();
 	private final HashMap<Integer, Location> branches = new HashMap<>();
 
@@ -53,11 +55,16 @@ public class Discharge extends LightningAbility implements AddonAbility {
 	private Vector direction;
 	private boolean hit;
 	private int spaces;
+	private int nextBranchId = 2;
 	private double branchSpace;
 	private final Random rand = new Random();
 
 	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.RANGE)
+	private double range;
+	@Attribute(Attribute.SPEED)
+	private double speed;
 	@Attribute(Attribute.COOLDOWN)
 	private long cooldown, avatarCooldown;
 	@Attribute(Attribute.DURATION)
@@ -115,9 +122,12 @@ public class Discharge extends LightningAbility implements AddonAbility {
 		ConfigurationSection config = JedCoreConfig.getConfig(this.player);
 
 		damage = config.getDouble("Abilities.Fire.Discharge.Damage");
+		range = Math.max(0.5, config.getDouble("Abilities.Fire.Discharge.Range", 10.0));
+		speed = Math.max(0.05, config.getDouble("Abilities.Fire.Discharge.Speed", 1.0));
 		cooldown = config.getLong("Abilities.Fire.Discharge.Cooldown");
 		avatarCooldown = config.getLong("Abilities.Fire.Discharge.AvatarCooldown");
-		duration = Math.max(50L, config.getLong("Abilities.Fire.Discharge.Duration", 1000L) / 2L);
+		long travelDuration = (long) Math.ceil(range / speed * 50.0) + 250L;
+		duration = Math.max(50L, Math.max(config.getLong("Abilities.Fire.Discharge.Duration", 1000L) / 2L, travelDuration));
 		slotSwapping = config.getBoolean("Abilities.Fire.Discharge.SlotSwapping");
 		entityCollisionRadius = config.getDouble("Abilities.Fire.Discharge.EntityCollisionRadius");
 		stunChance = getConfig().getDouble("Abilities.Fire.Discharge.Stun.Chance");
@@ -145,6 +155,7 @@ public class Discharge extends LightningAbility implements AddonAbility {
 				.subBranchChance(0.35)
 				.subBranchLength(0.15)
 				.branchJitter(0.7)
+				.clipToBlocks(true)
 				.displayTag(DISPLAY_TAG)
 				.build();
 	}
@@ -185,6 +196,9 @@ public class Discharge extends LightningAbility implements AddonAbility {
 
 		if (System.currentTimeMillis() < (getStartTime() + duration) && !hit) {
 			advanceLocation();
+			if (branches.isEmpty()) {
+				remove();
+			}
 		} else {
 			remove();
 		}
@@ -221,20 +235,24 @@ public class Discharge extends LightningAbility implements AddonAbility {
 		location = GeneralMethods.getMainHandLocation(player);
 		direction = location.getDirection().normalize();
 
-		if (branches.isEmpty()) {
+		if (branches.isEmpty() && (defensiveMode || spaces == 0)) {
 			branches.put(1, location.clone());
 		}
 
 		spaces++;
-		if (spaces % 3 == 0) {
+		if (spaces % 3 == 0 && branches.size() < MAX_BRANCHES) {
 			Location prevBranch = branches.get(1);
 			if (prevBranch != null) {
-				branches.put(branches.size() + 1, prevBranch.clone());
+				branches.put(nextBranchId++, prevBranch.clone());
 			}
 		}
 
 		List<LightningArc> arcs = new ArrayList<>();
 		List<Integer> cleanup = new ArrayList<>();
+
+		int steps = Math.max(5, (int) Math.ceil(speed / 0.2));
+		double stepDistance = speed / steps;
+		double rangeSquared = range * range;
 
 		for (int i : branches.keySet()) {
 			Location origin = branches.get(i);
@@ -248,9 +266,12 @@ public class Discharge extends LightningAbility implements AddonAbility {
 				}
 
 				l.add(createBranch(), createBranch(), createBranch());
+				l = clampToCollisionRadius(l);
 				branchSpace += 0.001;
 
-				for (int j = 0; j < 5; j++) {
+				boolean outOfRange = false;
+
+				for (int j = 0; j < steps; j++) {
 					if (rand.nextInt(soundInterval) == 0) {
 						player.getWorld().playSound(l, Sound.ENTITY_BEE_HURT, soundVolume, 0.2f);
 					}
@@ -277,7 +298,19 @@ public class Discharge extends LightningAbility implements AddonAbility {
 						return true;
 					});
 
-					l = l.add(direction.clone().multiply(0.2));
+					Location next = clampToCollisionRadius(l.clone().add(direction.clone().multiply(stepDistance)));
+					if (next.distanceSquared(location) > rangeSquared) {
+						outOfRange = true;
+						break;
+					}
+
+					l = next;
+				}
+
+				if (outOfRange) {
+					arcs.add(LightningArc.create(location, l, lightningStyle));
+					cleanup.add(i);
+					continue;
 				}
 
 				branches.put(i, l);
@@ -294,6 +327,25 @@ public class Discharge extends LightningAbility implements AddonAbility {
 		if (display != null) {
 			display.render(arcs);
 		}
+
+		LightningEffects.spawnBlockImpactParticles(arcs);
+	}
+
+	private Location clampToCollisionRadius(Location point) {
+		double radius = Math.max(0.05, entityCollisionRadius);
+		Vector axis = direction.clone().normalize();
+		Vector relative = point.toVector().subtract(location.toVector());
+		double along = relative.dot(axis);
+		Vector lateral = relative.clone().subtract(axis.clone().multiply(along));
+		double lateralSquared = lateral.lengthSquared();
+
+		if (lateralSquared <= radius * radius) {
+			return point;
+		}
+
+		lateral.multiply(radius / Math.sqrt(lateralSquared));
+		Vector clamped = location.toVector().add(axis.clone().multiply(along)).add(lateral);
+		return clamped.toLocation(point.getWorld(), point.getYaw(), point.getPitch());
 	}
 
 	private double createBranch() {
@@ -409,6 +461,22 @@ public class Discharge extends LightningAbility implements AddonAbility {
 		this.damage = damage;
 	}
 
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
@@ -503,7 +571,7 @@ public class Discharge extends LightningAbility implements AddonAbility {
 	}
 
 	public static boolean isLightningThreat(Player player) {
-		double range = 4.5;
+		double threatRange = 4.5;
 		Location loc = player.getLocation();
 		if (loc.getWorld() == null) {
 			return false;
@@ -516,16 +584,16 @@ public class Discharge extends LightningAbility implements AddonAbility {
 
 			Location origin = stream.getLocation();
 			if (origin != null && origin.getWorld() != null && origin.getWorld().equals(loc.getWorld())
-					&& origin.distanceSquared(loc) <= range * range) {
+					&& origin.distanceSquared(loc) <= threatRange * threatRange) {
 				return true;
 			}
 		}
 
-		if (com.jedk1.jedcore.util.LightningCollisionSystem.isNearLightning(player, range)) {
+		if (com.jedk1.jedcore.util.LightningCollisionSystem.isNearLightning(player, threatRange)) {
 			return true;
 		}
 
-		if (LightningBurst.isNearBolt(player, range)) {
+		if (LightningBurst.isNearBolt(player, threatRange)) {
 			return true;
 		}
 
@@ -537,19 +605,19 @@ public class Discharge extends LightningAbility implements AddonAbility {
 			Location dischargeLocation = discharge.getLocation();
 			if (dischargeLocation != null && dischargeLocation.getWorld() != null
 					&& dischargeLocation.getWorld().equals(loc.getWorld())
-					&& dischargeLocation.distanceSquared(loc) <= range * range) {
+					&& dischargeLocation.distanceSquared(loc) <= threatRange * threatRange) {
 				return true;
 			}
 
 			for (Location branch : discharge.getLocations()) {
 				if (branch.getWorld() != null && branch.getWorld().equals(loc.getWorld())
-						&& branch.distanceSquared(loc) <= range * range) {
+						&& branch.distanceSquared(loc) <= threatRange * threatRange) {
 					return true;
 				}
 			}
 		}
 
-		for (Entity entity : player.getNearbyEntities(range, range, range)) {
+		for (Entity entity : player.getNearbyEntities(threatRange, threatRange, threatRange)) {
 			if (entity instanceof org.bukkit.entity.LightningStrike) {
 				return true;
 			}
