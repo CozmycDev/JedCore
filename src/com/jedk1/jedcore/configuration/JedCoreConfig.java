@@ -527,9 +527,13 @@ public class JedCoreConfig {
 		config.addDefault("Abilities.Earth.MetalFragments.Cooldown", 5000);
 		config.addDefault("Abilities.Earth.MetalFragments.MaxSources", 3);
 		config.addDefault("Abilities.Earth.MetalFragments.SourceRange", 5);
-		config.addDefault("Abilities.Earth.MetalFragments.MaxFragments", 10);
+		config.addDefault("Abilities.Earth.MetalFragments.MaxFragments", 9);
 		config.addDefault("Abilities.Earth.MetalFragments.Damage", 4.0);
 		config.addDefault("Abilities.Earth.MetalFragments.Velocity", 2.0);
+		config.addDefault("Abilities.Earth.MetalFragments.LevitateHeight", 3.0);
+		config.addDefault("Abilities.Earth.MetalFragments.LevitateSpeed", 0.25);
+		config.addDefault("Abilities.Earth.MetalFragments.UseDisplaySources", true);
+		config.addDefault("Abilities.Earth.MetalFragments.RevertTime", 15000);
 		
 		config.addDefault("Abilities.Earth.MetalHook.Enabled", true);
 		config.addDefault("Abilities.Earth.MetalHook.Description", "Shoot metal grappling hooks to swing across terrain. "

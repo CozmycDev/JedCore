@@ -20,6 +20,7 @@ public class WobbleAnimation implements Animation {
     private final float frequency;
     private final float maxTilt;
     private final float twistAmount;
+    private float scale;
 
     public WobbleAnimation(Ability ability, BlockDisplay blockDisplay) {
         this.ability = ability;
@@ -30,6 +31,11 @@ public class WobbleAnimation implements Animation {
         this.frequency = 0.05f + random.nextFloat() * 0.05f;
         this.maxTilt = 0.15f + random.nextFloat() * 0.1f;
         this.twistAmount = 0.05f * random.nextFloat();
+        this.scale = blockDisplay.getTransformation().getScale().x;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 
     @Override
@@ -54,16 +60,15 @@ public class WobbleAnimation implements Animation {
                 .rotateX(tiltX)    // wobble
                 .rotateZ(tiltZ);
 
-        Vector3f scale = blockDisplay.getTransformation().getScale();
-        Vector3f pivot = new Vector3f(scale).mul(0.5f);
-
-        Vector3f rotatedPivot = new Vector3f(pivot).rotate(rotation);
-        Vector3f translation = new Vector3f(pivot).sub(rotatedPivot);
+        Vector3f half = new Vector3f(0.5f, 0.5f, 0.5f);
+        Vector3f scaledHalf = new Vector3f(half).mul(scale);
+        Vector3f rotatedPivot = new Vector3f(scaledHalf).rotate(rotation);
+        Vector3f translation = new Vector3f(half).sub(rotatedPivot);
 
         Transformation transform = new Transformation(
                 translation,
                 rotation,
-                scale,
+                new Vector3f(scale, scale, scale),
                 new Quaternionf()
         );
 
